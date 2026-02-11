@@ -27,16 +27,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Build with Maven
-      working-directory: ./stimmungsumfrage
-      run: mvn clean verify
- 
-    - name: Test Report
-      uses: actions/upload-artifact@v4
-      if: success() || failure()
-      with:
-          name: SpringBoot Report               # Name of the folder
-          path: target/site/serenity/  
+
+    - name: unit tests
+      run: mvn -B test --file pom.xml
+
+    - name: build the app
+      run: |
+        mvn clean
+        mvn -B package --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
