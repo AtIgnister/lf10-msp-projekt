@@ -16,7 +16,7 @@ on:
 
 jobs:
   build:
-
+    name: Springboot CI
     runs-on: ubuntu-latest
 
     steps:
