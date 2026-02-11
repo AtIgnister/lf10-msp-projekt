@@ -28,6 +28,7 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
+      working-directory: ./stimmungsumfrage
       run: mvn clean verify
  
     - name: Test Report
