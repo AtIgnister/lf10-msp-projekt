@@ -29,9 +29,11 @@ jobs:
         cache: maven
 
     - name: unit tests
+      working-directory: ./stimmungsumfrage
       run: mvn -B test --file pom.xml
 
     - name: build the app
+      working-directory: ./stimmungsumfrage
       run: |
         mvn clean
         mvn -B package --file pom.xml
