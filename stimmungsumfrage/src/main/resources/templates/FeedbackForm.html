@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Feedback Form</title>
+</head>
+<body>
+
+<h2>Stimmungsumfrage</h2>
+
+<form method="post">
+
+    <label for="feedback">Feedback:</label>
+    <input type="text" name="feedback" id="feedback" />
+    <br><br>
+
+    <label for="mood">Mood:</label>
+    <select name="mood" id="mood" required>
+        <option value="happy">Happy 😊</option>
+        <option value="neutral">Neutral 😐</option>
+        <option value="sad">Sad 😢</option>
+    </select>
+    <br><br>
+
+    <button type="submit">Submit</button>
+
+</form>
+
+</body>
+</html>
