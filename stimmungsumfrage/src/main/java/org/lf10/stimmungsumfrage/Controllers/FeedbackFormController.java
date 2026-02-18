@@ -21,10 +21,13 @@ public class FeedbackFormController {
     }
 
     @PostMapping("/")
-    public String handleForm(
+    public ModelAndView handleForm(
         @RequestParam String feedback,
         @RequestParam String mood, Model model
     ) {
-        return "redirect:/";
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("FeedbackInputConfirmation");
+
+        return mv;
     }
 }
