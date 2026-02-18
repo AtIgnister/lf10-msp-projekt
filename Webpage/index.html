@@ -6,21 +6,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="main.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <title>Document</title>
 </head>
 <body>
     <form action="javascript:;" onsubmit=" copy()">
-    <select id="emotion">
-        <option value="Select emotion" disabled selected>Select an Emotion</option>
-        <option value="😀">😀 Happy</option>
-        <option value="😒">😒 Annoyed</option>
-        <option value="🤨">🤨 Confused</option>
-        <option value="😢">😢 Sad</option>
-        <option value="😰">😰 Anxious</option>
-        <option value="😐">😐 Neutral</option>
-    </select>
-    <textarea id="comment" name="hi" placeholder="Input Your comment"></textarea>
-    <button type="submit">Copy</button> 
+        <div class="form-group">
+            <select class="form-select" id="emotion">
+                <option value="Select emotion" disabled selected>Select an Emotion</option>
+                <option value="😀">😀 Happy</option>
+                <option value="😒">😒 Annoyed</option>
+                <option value="🤨">🤨 Confused</option>
+                <option value="😢">😢 Sad</option>
+                <option value="😰">😰 Anxious</option>
+                <option value="😐">😐 Neutral</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <textarea class="form-control" id="comment" name="hi" placeholder="Input Your comment"></textarea>
+        </div>
+    <button class="btn btn-primary" type="submit">Copy</button> 
     </form>   
 </body>
 </html>
