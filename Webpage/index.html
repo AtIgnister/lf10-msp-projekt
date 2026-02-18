@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="main.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <form action="javascript:;" onsubmit=" copy()">
+    <select id="emotion">
+        <option value="Select emotion" disabled selected>Select an Emotion</option>
+        <option value="😀">😀 Happy</option>
+        <option value="😒">😒 Annoyed</option>
+        <option value="🤨">🤨 Confused</option>
+        <option value="😢">😢 Sad</option>
+        <option value="😰">😰 Anxious</option>
+        <option value="😐">😐 Neutral</option>
+    </select>
+    <textarea id="comment" name="hi" placeholder="Input Your comment"></textarea>
+    <button type="submit">Coppy</button> 
+    </form>   
+</body>
+</html>
