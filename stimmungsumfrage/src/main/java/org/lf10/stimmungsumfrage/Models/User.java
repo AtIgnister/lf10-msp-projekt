@@ -34,13 +34,9 @@ public class User {
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name="users_roles",
-            joinColumns={@JoinColumn(name="user_id")},
-            inverseJoinColumns={@JoinColumn(name="role_id")}
-    )
-    private List<Role> roles = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="role_id", nullable = false)
+    private Role role;
 
     public User() {}
 }
