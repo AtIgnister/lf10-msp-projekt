@@ -2,7 +2,7 @@ package org.lf10.stimmungsumfrage.Services;
 
 import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.User;
-import org.lf10.stimmungsumfrage.Repository.UserRepository;
+import org.lf10.stimmungsumfrage.Repositories.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

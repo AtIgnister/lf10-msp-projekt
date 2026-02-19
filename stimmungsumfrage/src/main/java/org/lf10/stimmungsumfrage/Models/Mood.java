@@ -15,11 +15,9 @@ public class Mood {
     @Column(name = "mood_name", nullable = false)
     private String moodName;
 
-    // Default constructor
     public Mood() {
     }
 
-    // Constructor with fields
     public Mood(String moodName) {
         this.moodName = moodName;
     }

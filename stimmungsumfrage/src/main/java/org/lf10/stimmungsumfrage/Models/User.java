@@ -30,6 +30,10 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id", nullable = false)
+    private Department department;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="users_roles",
