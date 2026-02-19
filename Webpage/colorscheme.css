@@ -1,0 +1,39 @@
+:root {
+    --first-color: #1fbfb8;
+    --second-color: #05716c;
+    --third-color: #1978A5;
+    --forth-color: #031163;
+    --fith-color: white;
+}
+body {
+    background: linear-gradient(to bottom right, var(--third-color) 30%, var(--first-color) 50%,var(--third-color) 75%);
+}
+.btn-primary, .btn-primary:hover {
+    background-color: var(--forth-color);
+    color: var(--fith-color);
+    border: none;
+}
+.form-select {
+    background-color: var(--forth-color);
+    color: var(--fith-color)
+}
+.form-select:hover, .btn-primary:hover, .form-control:hover {
+    background-color: var(--second-color);
+}
+.form-control, .form-control:focus {
+    background-color: var(--forth-color);
+    color: var(--fith-color);
+    border: none;
+    box-shadow: none;
+}
+
+.form-control::placeholder {
+    color: var(--fith-color);
+    opacity: 1;
+}
+.form-control:focus, .form-select:focus, .btn-primary:focus{
+    background-color: var(--second-color);
+    color: var(--fith-color);
+    border: none;
+    box-shadow: none;
+}
