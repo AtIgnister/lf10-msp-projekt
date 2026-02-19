@@ -15,11 +15,9 @@ public class Country {
     @Column(name = "country_name", nullable = false)
     private String countryName;
 
-    // Default constructor
     public Country() {
     }
 
-    // Constructor with fields
     public Country(String countryName) {
         this.countryName = countryName;
     }
