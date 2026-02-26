@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+<section class="d-flex align-items-center justify-content-center vh-100" layout:fragment="content">
+<div class="card shadow login-card">
+    <div class="card-body p-4">
+
+        <h4 class="text-center mb-4">Sign In</h4>
+
+        <!-- Error Message -->
+        <div th:if="${param.error}" class="alert alert-danger">
+            Invalid username or password
+        </div>
+
+        <!-- Logout Message -->
+        <div th:if="${param.logout}" class="alert alert-success">
+            You have been logged out
+        </div>
+
+        <form th:action="@{/login}" method="post">
+
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text"
+                       name="username"
+                       class="form-control"
+                       placeholder="Enter username"
+                       required autofocus>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password"
+                       name="password"
+                       class="form-control"
+                       placeholder="Enter password"
+                       required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                Login
+            </button>
+        </form>
+
+    </div>
+</div>
+</section>
+</body>
+</html>

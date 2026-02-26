@@ -9,16 +9,15 @@ public class Country {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "country_id")
-    private Long countryId;
+    private Long Id;
 
-    @Column(name = "country_name", nullable = false)
-    private String countryName;
+    @Column(nullable = false)
+    private String name;
 
     public Country() {
     }
 
     public Country(String countryName) {
-        this.countryName = countryName;
+        this.name = countryName;
     }
 }
