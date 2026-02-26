@@ -1,21 +1,23 @@
 package org.lf10.stimmungsumfrage.Controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.EmployeeFeedback;
 import org.lf10.stimmungsumfrage.repository.FeedbackRepository;
 import org.lf10.stimmungsumfrage.service.CrudService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+
+
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/feedback")
 public class CrudContoller {
 
-    CrudService crudService;
-    FeedbackRepository repository;
+    final CrudService crudService;
+    final FeedbackRepository repository;
 
 
     @PostMapping("/addFeedback")
@@ -23,15 +25,25 @@ public class CrudContoller {
 
         EmployeeFeedback createdFeedback = crudService.create(feedback);
         return ResponseEntity.ok(createdFeedback);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeFeedback> getFeedbackById(@PathVariable String id) {
+        EmployeeFeedback feedback = crudService.getById(id);
+        if (feedback != null) {
+            return ResponseEntity.ok(feedback);
+        } else {
+            return ResponseEntity.notFound().build();
         }
-
-
-
     }
 
-    public void read() {
 
+    @GetMapping("/all")
+    public ResponseEntity<List<EmployeeFeedback>> getFeedbackAll() {
+        List<EmployeeFeedback> feedback = repository.findAll();
+        return ResponseEntity.ok(feedback);
     }
+
 
 
     public void update() {
