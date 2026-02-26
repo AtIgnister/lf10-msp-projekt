@@ -2,7 +2,6 @@ package org.lf10.stimmungsumfrage.Controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.EmployeeFeedback;
-import org.lf10.stimmungsumfrage.repository.FeedbackRepository;
 import org.lf10.stimmungsumfrage.service.CrudService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +16,6 @@ import java.util.List;
 public class CrudContoller {
 
     final CrudService crudService;
-    final FeedbackRepository repository;
 
 
     @PostMapping("/addFeedback")
@@ -40,17 +38,27 @@ public class CrudContoller {
 
     @GetMapping("/all")
     public ResponseEntity<List<EmployeeFeedback>> getFeedbackAll() {
-        List<EmployeeFeedback> feedback = repository.findAll();
+        List<EmployeeFeedback> feedback = crudService.getAll();
         return ResponseEntity.ok(feedback);
     }
 
 
 
-    public void update() {
-
+    @PutMapping("/updateFeedback")
+    public ResponseEntity<EmployeeFeedback> updateFeedback(@RequestBody EmployeeFeedback feedback) {
+        EmployeeFeedback updatedFeedback = crudService.update(feedback);
+        return ResponseEntity.ok(updatedFeedback);
     }
 
-    public void delete() {
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<EmployeeFeedback> delete(@PathVariable String id) {
+        EmployeeFeedback feedback = crudService.getById(id);
+        if (feedback != null) {
+            crudService.delete(id);
+            return ResponseEntity.ok(feedback);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
 
     }
 }

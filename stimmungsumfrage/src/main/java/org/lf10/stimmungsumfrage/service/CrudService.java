@@ -24,4 +24,15 @@ public class CrudService {
     public List<EmployeeFeedback> getAll() {
         return feedbackRepository.findAll();
     }
+
+    public EmployeeFeedback update(EmployeeFeedback feedback) {
+        if (feedback.getId() == null || !feedbackRepository.existsById(feedback.getId().toString())) {
+            throw new RuntimeException("Feedback not found with id: " + feedback.getId());
+        }
+        return feedbackRepository.save(feedback);
+    }
+
+    public void delete(String id) {
+        feedbackRepository.deleteById(id);
+    }
 }
