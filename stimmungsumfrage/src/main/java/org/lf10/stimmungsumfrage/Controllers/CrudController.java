@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/feedback")
-public class CrudContoller {
+public class CrudController {
 
     final CrudService crudService;
 
