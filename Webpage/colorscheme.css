@@ -4,25 +4,34 @@
     --third-color: #1978A5;
     --forth-color: #031163;
     --fith-color: white;
+    --transparent-forth-color: color-mix(in srgb, var(--forth-color), transparent 40%);
+        --transparent-second-color: color-mix(in srgb, var(--second-color), transparent 40%);
+
+
 }
 body {
     background: linear-gradient(to bottom right, var(--third-color) 30%, var(--first-color) 50%,var(--third-color) 75%);
     height: 100vh;
+    background-image {
+        filter: blur(1.5rem);
+    }
+    
 }
 .btn-primary, .btn-primary:hover {
-    background-color: var(--forth-color);
+    background-color: var(--transparent-forth-color);
     color: var(--fith-color);
     border: none;
 }
 .form-select {
-    background-color: var(--forth-color);
-    color: var(--fith-color)
+    background-color: var(--transparent-forth-color);
+    color: var(--fith-color);
+    border: none;
 }
 .form-select:hover, .btn-primary:hover, .form-control:hover {
-    background-color: var(--second-color);
+    background-color: var(--transparent-second-color);
 }
 .form-control, .form-control:focus {
-    background-color: var(--forth-color);
+    background-color: var(--transparent-forth-color);
     color: var(--fith-color);
     border: none;
     box-shadow: none;
@@ -33,7 +42,7 @@ body {
     opacity: 1;
 }
 .form-control:focus, .form-select:focus, .btn-primary:focus{
-    background-color: var(--second-color);
+    background-color: var(--transparent-second-color);
     color: var(--fith-color);
     border: none;
     box-shadow: none;
