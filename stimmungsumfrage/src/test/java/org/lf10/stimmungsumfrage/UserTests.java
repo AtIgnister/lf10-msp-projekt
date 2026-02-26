@@ -30,7 +30,6 @@ class UserTests {
 
     @Test
     void registerUser_ShouldEncodePassword_AndSaveUser() {
-
         // Arrange
         Department department = new Department();
         Location location = new Location();
