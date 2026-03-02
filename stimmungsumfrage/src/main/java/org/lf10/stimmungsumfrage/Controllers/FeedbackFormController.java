@@ -5,7 +5,6 @@ import org.lf10.stimmungsumfrage.Models.*;
 import org.lf10.stimmungsumfrage.Models.Forms.FeedbackForm;
 import org.lf10.stimmungsumfrage.Repositories.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -31,12 +30,9 @@ public class FeedbackFormController {
     @PutMapping
     public String handleForm(
             @ModelAttribute("feedbackForm") FeedbackForm feedbackForm,
-            @AuthenticationPrincipal UserDetails userDetails,
+            @AuthenticationPrincipal User user,
             Model model
     ) {
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
         Mood moodEntity = moodRepository.findByMoodName(feedbackForm.getMood().toUpperCase())
                 .orElseThrow(() -> new RuntimeException("Mood not found"));
 

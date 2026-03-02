@@ -3,15 +3,17 @@ package org.lf10.stimmungsumfrage;
 import org.junit.jupiter.api.Test;
 import org.lf10.stimmungsumfrage.Controllers.FeedbackFormController;
 import org.lf10.stimmungsumfrage.Helpers.MockData;
+import org.lf10.stimmungsumfrage.Models.Mood;
 import org.lf10.stimmungsumfrage.Models.User;
 import org.lf10.stimmungsumfrage.Repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.security.authentication.TestingAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
+import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -55,11 +57,16 @@ public class FeedbackFormControllerTest {
     @Test
     void testFormSubmission() throws Exception {
         User mockUser = MockData.createMockUser();
-        TestingAuthenticationToken auth = new TestingAuthenticationToken(mockUser, mockUser.getPassword(), mockUser.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        Mood mood = new Mood();
+        mood.setMoodName("HAPPY");
+
+        when(moodRepository.findByMoodName("HAPPY"))
+                .thenReturn(Optional.of(mood));
 
         mockMvc.perform(
                 put("/")
+                        .with(user(mockUser))
                         .with(csrf())
                         .param("feedback", "This is a test feedback")
                         .param("mood", "happy")
