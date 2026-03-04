@@ -20,4 +20,15 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
+    public User updateUser(User user) {
+        if(user.getPassword() != null) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else {
+            User existingUser = userRepository.getReferenceById(user.getId());
+            user.setPassword(existingUser.getPassword());
+        }
+
+        return userRepository.save(user);
+    }
 }
