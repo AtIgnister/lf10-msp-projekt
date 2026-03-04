@@ -73,6 +73,7 @@ public class DataInitializer {
                 user.setPassword(passwordEncoder.encode("admin123"));
                 user.setRole(roleAdmin);
                 user.setDepartment(department);
+                user.setHasSubmittedFeedback(false);
 
                 userRepository.save(user);
 

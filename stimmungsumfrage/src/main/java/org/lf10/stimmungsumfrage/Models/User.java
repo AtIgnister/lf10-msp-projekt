@@ -37,7 +37,7 @@ public class User implements UserDetails {
     private String password;
 
     @Column(nullable = false)
-    private Boolean hasSubmittedFeedback;
+    private Boolean hasSubmittedFeedback = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
