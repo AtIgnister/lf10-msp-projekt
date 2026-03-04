@@ -1,19 +1,16 @@
 package org.lf10.stimmungsumfrage.Controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.Forms.FeedbackForm;
 import org.lf10.stimmungsumfrage.Models.User;
 import org.lf10.stimmungsumfrage.Repositories.DepartmentRepository;
 import org.lf10.stimmungsumfrage.Repositories.RoleRepository;
 import org.lf10.stimmungsumfrage.Repositories.UserRepository;
 import org.lf10.stimmungsumfrage.Security.AdminController;
-import org.lf10.stimmungsumfrage.Security.AdminView;
 import org.lf10.stimmungsumfrage.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @AdminController
+@RequiredArgsConstructor
 @RequestMapping("/admin/users")
 public class UserController {
 
