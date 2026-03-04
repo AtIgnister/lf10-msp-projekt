@@ -16,6 +16,7 @@ import java.util.Collections;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -42,15 +43,6 @@ public class User implements UserDetails {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="role_id", nullable = false)
     private Role role;
-
-    public User(String firstname, String lastname, String email, String password, Department department, Role role) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.email = email;
-        this.password = password;
-        this.department = department;
-        this.role = role;
-    }
 
     @Override
     @NonNull
