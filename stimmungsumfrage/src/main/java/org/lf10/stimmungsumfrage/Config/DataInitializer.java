@@ -15,6 +15,8 @@ public class DataInitializer {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final DepartmentRepository departmentRepository;
+    private final FeedbackTypeRepository feedbackTypeRepository;
+    private final MoodRepository moodRepository;
     private final LocationRepository locationRepository;
     private final CountryRepository countryRepository;
     private final PasswordEncoder passwordEncoder;
@@ -22,6 +24,20 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initDatabase() {
         return args -> {
+            FeedbackType defaultType = feedbackTypeRepository.findByName("General")
+                    .orElseGet(() -> {
+                        FeedbackType type = new FeedbackType();
+                        type.setName("General");
+                        return feedbackTypeRepository.save(type);
+                    });
+
+            // Default moods
+            String[] defaultMoods = {"HAPPY", "NEUTRAL", "SAD"};
+
+            for (String moodName : defaultMoods) {
+                moodRepository.findByMoodName(moodName)
+                        .orElseGet(() -> moodRepository.save(new Mood(moodName)));
+            }
 
             Country country = countryRepository.findByName("Germany")
                     .orElseGet(() -> countryRepository.save(new Country("Germany")));

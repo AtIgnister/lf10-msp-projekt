@@ -15,8 +15,8 @@
 
             <h2 class="mb-4">Stimmungsumfrage</h2>
 
-            <form method="post" class="card card-body shadow-sm">
-
+            <form th:method="put" th:action="@{/}" class="card card-body shadow-sm">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="mb-3">
                     <label for="feedback" class="form-label">Feedback</label>
                     <input type="text"
