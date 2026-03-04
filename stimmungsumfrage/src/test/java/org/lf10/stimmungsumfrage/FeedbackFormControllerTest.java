@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import java.util.Optional;
 
@@ -49,8 +50,8 @@ public class FeedbackFormControllerTest {
                     get("/")
                             .with(user(mockUser))
                             .with(csrf()))
-                .andExpect(status().isOk())     // expect HTTP 200 OK
-                .andExpect(view().name("FeedbackForm")); // expect the correct view name
+                .andExpect(status().isOk())
+                .andExpect(view().name("FeedbackForm"));
 
     }
 
@@ -64,12 +65,17 @@ public class FeedbackFormControllerTest {
         when(moodRepository.findByMoodName("HAPPY"))
                 .thenReturn(Optional.of(mood));
 
+        when(userRepository.findByEmail(mockUser.getEmail()))
+                .thenReturn(Optional.of(mockUser));
+
         mockMvc.perform(
                 put("/")
-                        .with(user(mockUser))
+                        .principal(new UsernamePasswordAuthenticationToken(mockUser.getEmail(), "n/a"))
                         .with(csrf())
                         .param("feedback", "This is a test feedback")
                         .param("mood", "happy")
-        );
+        )
+                .andExpect(status().isOk())
+                .andExpect(view().name("FeedbackInputConfirmation"));
     }
 }
