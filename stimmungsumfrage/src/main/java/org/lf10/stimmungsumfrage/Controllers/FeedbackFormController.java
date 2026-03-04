@@ -21,7 +21,7 @@ public class FeedbackFormController {
     }
 
     @PostMapping("/")
-    public ModelAndView handleForm(
+    public ModelAndView addForm(
         @RequestParam String feedback,
         @RequestParam String mood, Model model
     ) {
