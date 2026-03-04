@@ -1,3 +1,4 @@
+import 'charts.css'
 function copy()
 {
     let selection = document.getElementById("emotion");
