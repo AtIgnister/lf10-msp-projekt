@@ -87,7 +87,7 @@ public class UserController {
         return "users/edit";
     }
 
-    @PostMapping("/{id}")
+    @PatchMapping("/{id}")
     public String updateUser(
             @PathVariable Long id,  // User being edited
             @ModelAttribute("user") User userInput,
