@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.*;
 import org.lf10.stimmungsumfrage.Models.Forms.FeedbackForm;
 import org.lf10.stimmungsumfrage.Repositories.*;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +30,12 @@ public class FeedbackFormController {
     @PutMapping
     public String handleForm(
             @ModelAttribute("feedbackForm") FeedbackForm feedbackForm,
-            @AuthenticationPrincipal User user,
+            Authentication authentication,
             Model model
     ) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
+
         Mood moodEntity = moodRepository.findByMoodName(feedbackForm.getMood().toUpperCase())
                 .orElseThrow(() -> new RuntimeException("Mood not found"));
 
@@ -46,5 +49,12 @@ public class FeedbackFormController {
         model.addAttribute("feedback", feedbackForm.getFeedback());
         model.addAttribute("mood", moodEntity.getMoodName());
         return "FeedbackInputConfirmation";
+    }
+
+    // Zeigt alle Feedbacks, deren Text nicht leer ist.
+    @GetMapping("feedbacks")
+    public String getFeedbacksWithText(Model model) {
+        model.addAttribute("feedbacks", submissionRepository.findAllWithNonEmptyFeedbackText());
+        return "FeedbackList";
     }
 }
