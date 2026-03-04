@@ -1,33 +1,50 @@
 package org.lf10.stimmungsumfrage.Controllers;
 
+import lombok.RequiredArgsConstructor;
+import org.lf10.stimmungsumfrage.Models.*;
+import org.lf10.stimmungsumfrage.Models.Forms.FeedbackForm;
+import org.lf10.stimmungsumfrage.Repositories.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
-@RequestMapping(value = "/")
+@RequestMapping("/")
+@RequiredArgsConstructor
 public class FeedbackFormController {
-    @GetMapping
-    public ModelAndView getForm() {
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("FeedbackForm");
-        mv.getModel().put("data", "Welcome");
 
-        return mv;
+    private final UserRepository userRepository;
+    private final MoodRepository moodRepository;
+    private final FeedbackSubmissionRepository submissionRepository;
+
+    // Display feedback form
+    @GetMapping
+    public String getForm(Model model) {
+        model.addAttribute("feedbackForm", new FeedbackForm()); // bind empty form
+        model.addAttribute("data", "Welcome");
+        return "FeedbackForm";
     }
 
-    @PostMapping("/")
-    public ModelAndView handleForm(
-        @RequestParam String feedback,
-        @RequestParam String mood, Model model
+    // Handle form submission
+    @PutMapping
+    public String handleForm(
+            @ModelAttribute("feedbackForm") FeedbackForm feedbackForm,
+            @AuthenticationPrincipal User user,
+            Model model
     ) {
-        ModelAndView mv = new ModelAndView();
-        mv.setViewName("FeedbackInputConfirmation");
+        Mood moodEntity = moodRepository.findByMoodName(feedbackForm.getMood().toUpperCase())
+                .orElseThrow(() -> new RuntimeException("Mood not found"));
 
-        return mv;
+        FeedbackSubmission submission = new FeedbackSubmission();
+        submission.setFeedbackText(feedbackForm.getFeedback());
+        submission.setMood(moodEntity);
+        submission.setDepartment(user.getDepartment());
+
+        submissionRepository.save(submission);
+
+        model.addAttribute("feedback", feedbackForm.getFeedback());
+        model.addAttribute("mood", moodEntity.getMoodName());
+        return "FeedbackInputConfirmation";
     }
 }
