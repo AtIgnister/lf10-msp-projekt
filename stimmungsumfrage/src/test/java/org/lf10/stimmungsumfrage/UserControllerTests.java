@@ -1,19 +1,24 @@
 package org.lf10.stimmungsumfrage;
 
 import org.junit.jupiter.api.Test;
+import org.lf10.stimmungsumfrage.Config.DataInitializer;
 import org.lf10.stimmungsumfrage.Config.SecurityConfig;
 import org.lf10.stimmungsumfrage.Controllers.UserController;
 import org.lf10.stimmungsumfrage.Helpers.MockData;
+import org.lf10.stimmungsumfrage.Models.Department;
+import org.lf10.stimmungsumfrage.Models.Role;
 import org.lf10.stimmungsumfrage.Models.User;
 import org.lf10.stimmungsumfrage.Repositories.DepartmentRepository;
 import org.lf10.stimmungsumfrage.Repositories.MoodRepository;
 import org.lf10.stimmungsumfrage.Repositories.RoleRepository;
 import org.lf10.stimmungsumfrage.Repositories.UserRepository;
 import org.lf10.stimmungsumfrage.Services.UserService;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -22,7 +27,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 import org.springframework.data.domain.Page;
@@ -78,30 +83,49 @@ public class UserControllerTests {
 
     @Test
     void canCreateUser() throws Exception {
+        // Create admin mock
         User mockAdmin = MockData.createMockAdmin();
         mockAdmin.setId(1L);
 
-        User newUser = MockData.createMockUser();
-        newUser.setId(2L);
+        Department validDept = new Department();
+        validDept.setId(1L);
+        validDept.setName("Engineering");
 
-        // Stub repository save
+        Role validRole = new Role();
+        validRole.setId(1L);
+        validRole.setName("USER");
+
+        User newUser = new User()
+                .setId(2L)
+                .setFirstname("Jane")
+                .setLastname("Doe")
+                .setEmail("jane@example.com")
+                .setPassword("oldpass")
+                .setDepartment(validDept)
+                .setRole(validRole)
+                .setHasSubmittedFeedback(false);
+
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
-        mockMvc.perform(
-                        put("/admin/users")
-                                .with(user(mockAdmin))
-                                .with(csrf())
-                                .param("firstname", "John")
-                                .param("lastname", "Doe")
-                                .param("email", "john.doe@example.com")
-                        // add other required User fields
+        Mockito.clearInvocations(userRepository);
+
+        mockMvc.perform(post("/admin/users")
+                        .with(user(mockAdmin))
+                        .with(csrf())
+                        .param("_method", "put")
+                        .param("firstname", "John")
+                        .param("lastname", "Doe")
+                        .param("email", "john.doe@example.com")
+                        .param("password", "12345678")
+                        .param("department.id", "1")
+                        .param("role.id", "1")
                 )
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admin/users"));
 
-        // Verify repository.save was called
         verify(userRepository, times(1)).save(any(User.class));
     }
+
 
     @Test
     void canDeleteUser() throws Exception {

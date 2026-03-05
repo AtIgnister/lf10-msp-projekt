@@ -11,10 +11,13 @@ import org.lf10.stimmungsumfrage.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @AdminController
@@ -46,12 +49,14 @@ public class UserController {
     }
 
     @PutMapping
-    public String createUser(@ModelAttribute User user, BindingResult result, Model model) {
+    public ModelAndView createUser(@ModelAttribute @Validated User user, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            return "users/create"; // Return form with errors
+            model.addAttribute("departments", departmentRepository.findAll());
+            model.addAttribute("roles", roleRepository.findAll());
+            return new ModelAndView("users/create", HttpStatus.BAD_REQUEST);
         }
         userRepository.save(user); // Hash password first in service
-        return "redirect:/admin/users";
+        return new ModelAndView("redirect:/admin/users");
     }
 
     @GetMapping("/new")
