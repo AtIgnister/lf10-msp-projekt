@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="de_DE">
+<head>
+    <title>Users List</title>
+</head>
+<body>
+<section layout:fragment="content">
+<div class="card">
+    <div class="card-header">
+        <h4>Edit User</h4>
+    </div>
+    <div class="card-body">
+        <form th:action="@{/admin/users/{id}(id=${user.id})}" th:object="${user}" th:method="patch">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <input type="hidden" th:field="*{id}">
+
+            <!-- First Name -->
+            <div class="mb-3">
+                <label class="form-label" for="firstname">First Name</label>
+                <input type="text" class="form-control" th:field="*{firstname}">
+                <div th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}" class="text-danger small"></div>
+            </div>
+
+            <!-- Last Name -->
+            <div class="mb-3">
+                <label class="form-label" for="lastname">Last Name</label>
+                <input type="text" class="form-control" th:field="*{lastname}">
+                <div th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}" class="text-danger small"></div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3">
+                <label class="form-label" for="email">Email</label>
+                <input type="email" class="form-control" th:field="*{email}">
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="text-danger small"></div>
+            </div>
+
+            <!-- Department -->
+            <div class="mb-3">
+                <label class="form-label">Department</label>
+                <select class="form-select" th:field="*{department.id}">
+                    <option value="">Select Department</option>
+                    <option th:each="dept : ${departments}"
+                            th:value="${dept.id}"
+                            th:text="${dept.name}"
+                            th:selected="${user.department.id == dept.id}"></option>
+                </select>
+            </div>
+
+            <!-- Role -->
+            <div class="mb-3">
+                <label class="form-label">Role</label>
+                <select class="form-select" th:field="*{role.id}">
+                    <option value="">Select Role</option>
+                    <option th:each="roleItem : ${roles}"
+                            th:value="${roleItem.id}"
+                            th:text="${roleItem.name}"
+                            th:selected="${user.role.id == roleItem.id}"></option>
+                </select>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Update User</button>
+                <a th:href="@{/admin/users}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+</section>
+</body>
