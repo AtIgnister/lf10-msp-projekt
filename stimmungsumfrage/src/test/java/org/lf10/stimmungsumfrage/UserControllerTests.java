@@ -25,9 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 
 import org.springframework.data.domain.Page;
@@ -37,6 +34,7 @@ import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -126,6 +124,39 @@ public class UserControllerTests {
         verify(userRepository, times(1)).save(any(User.class));
     }
 
+    @Test
+    void canEditUser() throws Exception {
+        User mockAdmin = MockData.createMockAdmin();
+        mockAdmin.setId(1L);
+
+        User existingUser = MockData.createMockUser();
+        existingUser.setId(2L);
+
+        when(userRepository.findById(2L)).thenReturn(Optional.of(existingUser));
+        
+        User updatedUser = new User()
+                .setId(2L)
+                .setFirstname("John")
+                .setLastname("Updated")
+                .setEmail("john.updated@example.com");
+
+        when(userService.updateUser(any(User.class))).thenReturn(updatedUser);
+
+        mockMvc.perform(patch("/admin/users/2")
+                        .with(user(mockAdmin))
+                        .with(csrf())
+                        .param("firstname", "John")
+                        .param("lastname", "Updated")
+                        .param("email", "john.updated@example.com")
+                        .param("department.id", "1")
+                        .param("role.id", "2")
+                )
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/admin/users"));
+
+        verify(userService, times(1)).updateUser(any(User.class));
+        verify(userRepository, times(1)).findById(2L);
+    }
 
     @Test
     void canDeleteUser() throws Exception {
