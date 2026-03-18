@@ -17,32 +17,12 @@
 
     <div id="viewChart">
         <table class="charts-css column show-heading show-labels">
-            
+
             <tbody>
-                <tr>
-                    <th scope="row">😀</th>
-                    <td>12</td>
-                </tr>
-                <tr>
-                    <th scope="row">😒</th>
-                    <td>12</td>
-                </tr>
-                <tr>
-                    <th scope="row">🤨</th>
-                    <td>12</td>
-                </tr>
-                <tr>
-                    <th scope="row">😢</th>
-                    <td>12</td>
-                </tr>
-                <tr>
-                    <th scope="row">😰</th>
-                    <td>12</td>
-                </tr>
-                <tr>
-                    <th scope="row">😐</th>
-                    <td>12</td>
-                </tr>
+            <tr th:each="mood : ${moodCounts}">
+                <th scope="row" th:text="${mood.moodName}">Mood</th>
+                <td th:style="'--size: ' + ${mood.percentage}" th:text="${mood.count}">0</td>
+            </tr>
             </tbody>
         </table>
     </div>
