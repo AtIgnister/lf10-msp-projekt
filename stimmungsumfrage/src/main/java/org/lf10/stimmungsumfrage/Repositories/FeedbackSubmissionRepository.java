@@ -1,5 +1,6 @@
 package org.lf10.stimmungsumfrage.Repositories;
 
+import org.lf10.stimmungsumfrage.Interfaces.MoodCount;
 import org.lf10.stimmungsumfrage.Models.FeedbackSubmission;
 import org.lf10.stimmungsumfrage.Models.Department;
 import org.lf10.stimmungsumfrage.Models.Mood;
@@ -22,4 +23,12 @@ public interface FeedbackSubmissionRepository extends JpaRepository<FeedbackSubm
 
     @Query("SELECT fs FROM FeedbackSubmission fs WHERE fs.feedbackText IS NOT NULL AND TRIM(fs.feedbackText) <> ''")
     List<FeedbackSubmission> findAllWithNonEmptyFeedbackText();
+
+    @Query("""
+    SELECT m.moodName AS moodName, COUNT(f) AS count
+    FROM Mood m
+    LEFT JOIN FeedbackSubmission f ON f.mood = m
+    GROUP BY m.moodName
+""")
+    List<MoodCount> countSubmissionsByMood();
 }
