@@ -24,6 +24,11 @@ public interface FeedbackSubmissionRepository extends JpaRepository<FeedbackSubm
     @Query("SELECT fs FROM FeedbackSubmission fs WHERE fs.feedbackText IS NOT NULL AND TRIM(fs.feedbackText) <> ''")
     List<FeedbackSubmission> findAllWithNonEmptyFeedbackText();
 
+    List<FeedbackSubmission> findByCreatedAtBetweenOrderByCreatedAtAsc(
+            LocalDateTime start,
+            LocalDateTime end
+    );
+
     @Query("""
     SELECT m.moodName AS moodName, COUNT(f) AS count
     FROM Mood m
