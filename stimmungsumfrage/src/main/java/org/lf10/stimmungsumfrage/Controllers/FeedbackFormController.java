@@ -23,6 +23,8 @@ public class FeedbackFormController {
     public String getForm(Model model) {
         model.addAttribute("feedbackForm", new FeedbackForm()); // bind empty form
         model.addAttribute("data", "Welcome");
+        model.addAttribute("moods", moodRepository.findAll()); // <-- add this
+
         return "FeedbackForm";
     }
 
