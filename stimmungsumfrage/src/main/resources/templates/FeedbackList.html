@@ -4,37 +4,41 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Feedbacks mit Text</title>
+    <title>Feedbacks</title>
 </head>
 
 <body>
-<section layout:fragment="content">
-    <h2 class="mb-3">Feedbacks mit Text</h2>
+<section layout:fragment="content" class="fade-in">
+    <h2 class="page-heading mb-4">Feedbacks mit Text</h2>
 
-    <div class="table-responsive" th:if="${!#lists.isEmpty(feedbacks)}">
-        <table class="table table-striped table-bordered align-middle">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Abteilung</th>
-                <th>Stimmung</th>
-                <th>Feedback</th>
-                <th>Erstellt am</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="feedback : ${feedbacks}">
-                <td th:text="${feedback.id}">1</td>
-                <td th:text="${feedback.department.name}">IT</td>
-                <td th:text="${feedback.mood.moodName}">HAPPY</td>
-                <td th:text="${feedback.feedbackText}">Sehr gut</td>
-                <td th:text="${#temporals.format(feedback.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026 10:00</td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="card" th:if="${!#lists.isEmpty(feedbacks)}">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Abteilung</th>
+                    <th>Stimmung</th>
+                    <th>Feedback</th>
+                    <th>Erstellt am</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="feedback : ${feedbacks}">
+                    <td th:text="${feedback.id}">1</td>
+                    <td th:text="${feedback.department.name}">IT</td>
+                    <td th:text="${feedback.mood.moodName}">HAPPY</td>
+                    <td th:text="${feedback.feedbackText}">Sehr gut</td>
+                    <td th:text="${#temporals.format(feedback.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026 10:00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    <p class="text-muted" th:if="${#lists.isEmpty(feedbacks)}">Keine Feedbacks mit Text gefunden.</p>
+    <div class="card p-4 text-center" th:if="${#lists.isEmpty(feedbacks)}">
+        <p class="text-secondary-dark mb-0">Keine Feedbacks mit Text gefunden.</p>
+    </div>
 </section>
 </body>
 </html>
