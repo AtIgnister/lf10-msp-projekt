@@ -1,41 +1,81 @@
 <!DOCTYPE html>
-<html lang="en"
+<html lang="de"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title layout:title-pattern="$CONTENT_TITLE - My App">My App</title>
+    <title layout:title-pattern="$CONTENT_TITLE - Stimmungsumfrage">Stimmungsumfrage</title>
 
     <!-- Bootstrap CSS -->
     <link th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}"
           rel="stylesheet" />
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- App Styles -->
+    <link th:href="@{/css/styles.css}" rel="stylesheet" />
 
     <!-- Bootstrap JS Bundle -->
     <script th:src="@{/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js}"
             defer></script>
 
     <!-- htmx -->
-    <script th:src="@{/webjars/htmx.org/2.0.8/dist/htmx.min.js}"
-            ></script>
+    <script th:src="@{/webjars/htmx.org/2.0.8/dist/htmx.min.js}"></script>
 </head>
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" th:href="@{/}">My App</a>
-        <div class="navbar-nav">
-            <a class="nav-link" th:href="@{/feedbacks}">Feedbacks</a>
+<!-- Header -->
+<header class="app-header sticky-top">
+    <div class="container py-3 d-flex align-items-center justify-content-between">
+        <a class="navbar-brand text-white fw-bold fs-5 text-decoration-none"
+           th:href="@{/}">Team Stimmungsbarometer</a>
+        <div class="d-flex align-items-center gap-4">
+            <div class="text-end" th:if="${currentUserDisplay != null}">
+                <p class="mb-0 text-white fw-medium" th:text="${currentUserDisplay}">Benutzer</p>
+                <p class="mb-0 text-role" style="font-size: 0.75rem;"
+                   th:text="${currentUserRole + ' • ' + currentUserDepartment}">Rolle</p>
+            </div>
+            <form th:action="@{/logout}" method="post" class="d-inline mb-0">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="btn-logout">Abmelden</button>
+            </form>
         </div>
+    </div>
+</header>
+
+<!-- Navigation Tabs -->
+<nav class="app-nav">
+    <div class="container d-flex gap-2 py-2">
+        <a class="nav-link" th:href="@{/}">Abstimmen</a>
+        <a class="nav-link" th:href="@{/feedbacks}">Feedbacks</a>
+        <a class="nav-link" th:href="@{/channels}">Kan&auml;le</a>
+        <a class="nav-link" th:href="@{/dashboard}" th:if="${isAdmin}">Dashboard</a>
+        <a class="nav-link" th:href="@{/admin/users}" th:if="${isAdmin}">Benutzer</a>
     </div>
 </nav>
 
-<main class="container mt-4"
+<main class="app-content"
       layout:fragment="content">
     <!-- Page content will be inserted here -->
 </main>
+
+<script>
+    // Highlight active nav link based on current URL
+    document.querySelectorAll('.app-nav .nav-link').forEach(function(link) {
+        var href = link.getAttribute('href');
+        var path = window.location.pathname;
+        if (href === path || (href !== '/' && path.startsWith(href))) {
+            link.classList.add('active');
+        }
+    });
+</script>
 
 </body>
 </html>
