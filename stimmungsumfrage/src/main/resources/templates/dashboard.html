@@ -1,31 +1,129 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+      layout:decorate="~{layout}" lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
-    <link rel="stylesheet" href="colorscheme.css">
-    <link rel="stylesheet" href="chartStyle.css">
-    <title>Document</title>
+    <title>Dashboard</title>
+    <style>
+        .stat-bar-track {
+            width: 100%;
+            background-color: #e2e8f0;
+            border-radius: 9999px;
+            height: 0.5rem;
+            margin-top: 0.25rem;
+        }
+        .stat-bar-fill {
+            height: 0.5rem;
+            border-radius: 9999px;
+            transition: width 0.5s ease;
+        }
+        .stat-bar-fill.good    { background-color: #10b981; }
+        .stat-bar-fill.neutral { background-color: #eab308; }
+        .stat-bar-fill.bad     { background-color: #ef4444; }
+    </style>
 </head>
 <body>
-<section layout:fragment="content">
-    <button class="btn btn-danger ">Logout</button>
-    <a class="btn btn-primary" href="/">Send Emotion</a>
+<section layout:fragment="content" class="fade-in">
 
-    <div id="viewChart">
-        <table class="charts-css column show-heading show-labels">
+    <h2 class="page-heading mb-4">Team-&Uuml;bersicht</h2>
 
-            <tbody>
-            <tr th:each="mood : ${moodCounts}">
-                <th scope="row" th:text="${mood.moodName}">Mood</th>
-                <td th:style="'--size: ' + ${mood.percentage}" th:text="${mood.count}">0</td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="row g-4 mb-4">
+        <!-- Mood Statistics -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="mb-4 d-flex align-items-center gap-2">
+                        <span>📊</span> Stimmungsverteilung
+                    </h5>
+                    <div th:if="${#lists.isEmpty(moodCounts)}" class="text-secondary-dark">
+                        Keine Daten vorhanden.
+                    </div>
+                    <div th:if="${!#lists.isEmpty(moodCounts)}" class="d-flex flex-column gap-3">
+                        <div th:each="mood : ${moodCounts}">
+                            <div class="d-flex justify-content-between" style="font-size: 0.875rem;">
+                                <span>
+                                    <span th:switch="${mood.moodName}">
+                                        <span th:case="'HAPPY'">😊</span>
+                                        <span th:case="'NEUTRAL'">😐</span>
+                                        <span th:case="'SAD'">😢</span>
+                                    </span>
+                                    <span th:text="${mood.moodName}">Mood</span>
+                                </span>
+                                <span class="fw-semibold" th:text="${mood.count} + ' Stimmen'">0</span>
+                            </div>
+                            <div class="stat-bar-track">
+                                <div class="stat-bar-fill"
+                                     th:classappend="${mood.moodName == 'HAPPY' ? 'good' : (mood.moodName == 'NEUTRAL' ? 'neutral' : 'bad')}"
+                                     th:style="'width: ' + ${mood.percentage * 100} + '%'">
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-secondary-dark mt-2 pt-2 border-top" style="font-size: 0.75rem;"
+                           th:text="${totalVotes} + ' Abstimmungen insgesamt'">
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Info -->
+        <div class="col-md-6">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="mb-4 d-flex align-items-center gap-2">
+                        <span>🏢</span> &Uuml;bersicht
+                    </h5>
+                    <div class="d-flex flex-column gap-3">
+                        <div th:each="mood : ${moodCounts}" class="d-flex align-items-center gap-3">
+                            <span th:switch="${mood.moodName}" style="font-size: 2rem;">
+                                <span th:case="'HAPPY'">😊</span>
+                                <span th:case="'NEUTRAL'">😐</span>
+                                <span th:case="'SAD'">😢</span>
+                            </span>
+                            <div>
+                                <p class="mb-0 fw-semibold" th:text="${mood.moodName}">Mood</p>
+                                <p class="mb-0 text-secondary-dark" style="font-size: 0.875rem;"
+                                   th:text="${#numbers.formatDecimal(mood.percentage * 100, 1, 0)} + '%'">0%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Recent Feedbacks -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="mb-4 d-flex align-items-center gap-2">
+                <span>💬</span> Aktuelle Kommentare (anonym)
+            </h5>
+            <div th:if="${#lists.isEmpty(recentFeedbacks)}" class="text-secondary-dark">
+                Keine Kommentare vorhanden.
+            </div>
+            <div th:if="${recentFeedbacks != null && !#lists.isEmpty(recentFeedbacks)}"
+                 class="d-flex flex-column gap-2" style="max-height: 20rem; overflow-y: auto;">
+                <div th:each="fb : ${recentFeedbacks}" class="card">
+                    <div class="card-body py-2 px-3">
+                        <div class="d-flex align-items-center gap-2 mb-1">
+                            <span th:switch="${fb.mood.moodName}" style="font-size: 1.125rem;">
+                                <span th:case="'HAPPY'">😊</span>
+                                <span th:case="'NEUTRAL'">😐</span>
+                                <span th:case="'SAD'">😢</span>
+                            </span>
+                            <small class="text-secondary-dark"
+                                   th:text="${fb.mood.moodName} + ' • ' + ${fb.department.name}">Mood</small>
+                            <small class="text-secondary-dark ms-auto"
+                                   th:text="${#temporals.format(fb.createdAt, 'dd.MM. HH:mm')}">Datum</small>
+                        </div>
+                        <p class="mb-0" style="font-size: 0.875rem;" th:text="${fb.feedbackText}">Kommentar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </section>
 </body>
 </html>

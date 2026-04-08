@@ -3,7 +3,7 @@ package org.lf10.stimmungsumfrage.Controllers;
 import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Interfaces.MoodCount;
 import org.lf10.stimmungsumfrage.Repositories.FeedbackSubmissionRepository;
-import org.springframework.stereotype.Controller;
+import org.lf10.stimmungsumfrage.Security.AdminController;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@AdminController
 @RequestMapping("/dashboard")
 @RequiredArgsConstructor
 public class DashboardController {
@@ -46,6 +46,13 @@ public class DashboardController {
                 .toList();
 
         model.addAttribute("moodCounts", normalized);
+        model.addAttribute("totalVotes", total);
+        model.addAttribute("recentFeedbacks",
+                feedbackSubmissionRepository.findAllWithNonEmptyFeedbackText()
+                        .stream()
+                        .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                        .limit(5)
+                        .toList());
         return "dashboard";
     }
 }
