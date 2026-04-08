@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="de" class="h-full">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Stimmungsbarometer – Anmelden</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body class="h-full text-white overflow-auto">
+
+    <div class="min-h-full flex items-center justify-center p-6">
+      <div class="w-full max-w-md fade-in">
+
+        <!-- Branding -->
+        <div class="text-center mb-8">
+          <div class="text-6xl mb-4">📊</div>
+          <h1 class="text-3xl font-bold login-title">Team Stimmungsbarometer</h1>
+          <p class="text-seconday-dark mt-2">Teile deine Stimmung – anonym &amp; ehrlich</p>
+        </div>
+
+        <div class="rounded-2xl p-8 border border-white login-card">
+
+          <!-- Login Form -->
+          <div id="login-form-container">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium form-label">Benutzername</label>
+                <input type="text" id="login-username"
+                  class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 text-black form-input"
+                  placeholder="Dein Benutzername">
+              </div>
+              <div>
+                <label class="block text-sm font-medium form-label">Passwort</label>
+                <input type="password" id="login-password"
+                  class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 text-black form-input"
+                  placeholder="••••••••">
+              </div>
+              <div id="login-error" class="text-red-400 text-sm hidden"></div>
+              <button id="login-btn"
+                class="w-full py-3 rounded-xl font-semibold transition-all btn-primary">
+                Anmelden
+              </button>
+            </div>
+            <div class="mt-6 text-center">
+              <button id="show-register" class="text-sm transition-all text-link">
+                Noch kein Konto? Jetzt registrieren
+              </button>
+            </div>
+          </div>
+
+          <!-- Register Form -->
+          <div id="register-form-container" class="hidden">
+            <div class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium form-label">Benutzername</label>
+                <input type="text" id="reg-username"
+                  class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 text-black form-input"
+                  placeholder="Wähle einen Benutzernamen">
+              </div>
+              <div>
+                <label class="block text-sm font-medium form-label">Passwort</label>
+                <input type="password" id="reg-password"
+                  class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 text-black form-input"
+                  placeholder="Mindestens 4 Zeichen">
+              </div>
+              <div>
+                <label class="block text-sm font-medium form-label">Abteilung</label>
+                <select id="reg-department"
+                  class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 text-black form-input">
+                  <option value="">Abteilung wählen</option>
+                  <option value="IT">IT</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Vertrieb">Vertrieb</option>
+                  <option value="Personal">Personal</option>
+                  <option value="Finanzen">Finanzen</option>
+                  <option value="Produktion">Produktion</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium form-label">Rolle</label>
+                <select id="reg-role"
+                  class="w-full px-4 py-3 rounded-xl focus:outline-none focus:ring-2 text-black form-input">
+                  <option value="employee">Mitarbeiter</option>
+                  <option value="manager">Vorgesetzter</option>
+                </select>
+              </div>
+              <div id="register-error" class="text-red-400 text-sm hidden"></div>
+              <button id="register-btn"
+                class="w-full py-3 rounded-xl font-semibold transition-all btn-register">
+                Registrieren
+              </button>
+            </div>
+            <div class="mt-6 text-center">
+              <button id="show-login" class="text-sm transition-all text-link">
+                Bereits ein Konto? Anmelden
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <script src="js/store.js"></script>
+    <script src="js/auth.js"></script>
+  </body>
+</html>

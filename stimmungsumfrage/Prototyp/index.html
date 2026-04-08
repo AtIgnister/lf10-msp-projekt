@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="de" class="h-full">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Stimmungsbarometer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body class="h-full text-teal-900 overflow-auto">
+
+    <div class="w-full min-h-full">
+
+      <!-- Header -->
+      <header class="backdrop-blur-sm sticky top-0 z-10 app-header">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+          <h1 id="app-title" class="text-xl font-bold text-white">Team Stimmungsbarometer</h1>
+          <div class="flex items-center gap-4">
+            <div class="text-right">
+              <p id="user-display" class="font-medium text-white"></p>
+              <p id="role-display" class="text-xs text-role"></p>
+            </div>
+            <button id="logout-btn"
+              class="px-4 py-2 rounded-lg text-sm transition-all btn-primary text-white">
+              Abmelden
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <nav class="border-b app-nav">
+        <div class="max-w-6xl mx-auto px-6 flex gap-2 py-2">
+          <button id="tab-vote"      class="tab-btn px-4 py-2 rounded-lg font-medium transition-all active">Abstimmen</button>
+          <button id="tab-history"   class="tab-btn px-4 py-2 rounded-lg font-medium transition-all">Mein Verlauf</button>
+          <button id="tab-channels"  class="tab-btn px-4 py-2 rounded-lg font-medium transition-all">Kanäle</button>
+          <button id="tab-dashboard" class="tab-btn px-4 py-2 rounded-lg font-medium transition-all hidden">Dashboard</button>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <main class="max-w-6xl mx-auto px-6 py-8">
+
+        <!-- ── Vote Section ──────────────────────────────────────── -->
+        <section id="section-vote" class="fade-in">
+          <div class="text-center mb-8">
+            <h2 id="welcome-msg" class="text-2xl font-bold text-teal-700 mb-2">Wie geht es dir heute?</h2>
+            <p class="text-secondary-dark">Bewerte diese drei Bereiche mit einem Emoji</p>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6 mb-8">
+
+            <!-- Arbeitsklima -->
+            <div class="bg-slate-50/90 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 card-hover hover:border-teal-400 hover:bg-teal-50 shadow-sm transition-all">
+              <div class="text-center mb-4">
+                <span class="text-4xl">🏢</span>
+                <h3 class="text-lg font-semibold mt-2 text-teal-900">Arbeitsklima</h3>
+                <p class="text-sm text-secondary-dark">Teamzusammenhalt &amp; Atmosphäre</p>
+              </div>
+              <div class="flex justify-center gap-2 mb-4" id="emoji-climate">
+                <button class="emoji-btn p-2 text-3xl" data-rating="1" data-emoji="😢">😢</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="2" data-emoji="😕">😕</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="3" data-emoji="😐">😐</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="4" data-emoji="🙂">🙂</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="5" data-emoji="😄">😄</button>
+              </div>
+              <textarea id="comment-climate"
+                class="w-full px-4 py-3 bg-white border border-teal-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-teal-900 placeholder-slate-400 resize-none"
+                rows="2" placeholder="Optionaler Kommentar..."></textarea>
+            </div>
+
+            <!-- Arbeitspensum -->
+            <div class="bg-slate-50/90 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 card-hover hover:border-teal-400 hover:bg-teal-50 shadow-sm transition-all">
+              <div class="text-center mb-4">
+                <span class="text-4xl">⚖️</span>
+                <h3 class="text-lg font-semibold mt-2 text-teal-900">Arbeitspensum</h3>
+                <p class="text-sm text-secondary-dark">Workload &amp; Work-Life-Balance</p>
+              </div>
+              <div class="flex justify-center gap-2 mb-4" id="emoji-workload">
+                <button class="emoji-btn p-2 text-3xl" data-rating="1" data-emoji="🥵">🥵</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="2" data-emoji="😓">😓</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="3" data-emoji="😐">😐</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="4" data-emoji="😌">😌</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="5" data-emoji="😎">😎</button>
+              </div>
+              <textarea id="comment-workload"
+                class="w-full px-4 py-3 bg-white border border-teal-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-teal-900 placeholder-slate-400 resize-none"
+                rows="2" placeholder="Optionaler Kommentar..."></textarea>
+            </div>
+
+            <!-- Bezahlung -->
+            <div class="bg-slate-50/90 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 card-hover hover:border-teal-400 hover:bg-teal-50 shadow-sm transition-all">
+              <div class="text-center mb-4">
+                <span class="text-4xl">💰</span>
+                <h3 class="text-lg font-semibold mt-2 text-teal-900">Bezahlung</h3>
+                <p class="text-sm text-secondary-dark">Gehalt &amp; Benefits</p>
+              </div>
+              <div class="flex justify-center gap-2 mb-4" id="emoji-salary">
+                <button class="emoji-btn p-2 text-3xl" data-rating="1" data-emoji="😢">😢</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="2" data-emoji="😕">😕</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="3" data-emoji="😐">😐</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="4" data-emoji="🙂">🙂</button>
+                <button class="emoji-btn p-2 text-3xl" data-rating="5" data-emoji="🤑">🤑</button>
+              </div>
+              <textarea id="comment-salary"
+                class="w-full px-4 py-3 bg-white border border-teal-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-teal-900 placeholder-slate-400 resize-none"
+                rows="2" placeholder="Optionaler Kommentar..."></textarea>
+            </div>
+
+          </div>
+
+          <div class="text-center">
+            <div id="vote-error"   class="text-red-400     text-sm mb-4 hidden"></div>
+            <div id="vote-success" class="text-emerald-400 text-sm mb-4 hidden"></div>
+            <button id="submit-vote"
+              class="px-8 py-3 rounded-xl font-semibold transition-all btn-primary disabled:opacity-50 disabled:cursor-not-allowed">
+              Abstimmung abschicken
+            </button>
+          </div>
+        </section>
+
+        <!-- ── History Section ──────────────────────────────────── -->
+        <section id="section-history" class="hidden fade-in">
+          <h2 class="text-2xl font-bold text-teal-700 mb-6">Mein Abstimmungsverlauf</h2>
+          <div id="history-list" class="space-y-4">
+            <p class="text-secondary-dark text-center py-8">Noch keine Abstimmungen vorhanden.</p>
+          </div>
+        </section>
+
+        <!-- ── Channels Section ─────────────────────────────────── -->
+        <section id="section-channels" class="hidden fade-in">
+          <div class="flex items-center justify-between mb-8">
+            <h2 class="text-2xl font-bold text-teal-700">Team Kanäle</h2>
+            <button id="btn-create-channel" 
+              class="px-4 py-2 rounded-lg font-medium transition-all btn-primary text-white">
+              + Neuer Kanal
+            </button>
+          </div>
+
+          <!-- Create Channel Modal -->
+          <div id="modal-create-channel" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl p-8 w-full max-w-md border border-teal-200">
+              <h3 class="text-xl font-bold text-teal-900 mb-6">Neuen Kanal erstellen</h3>
+              <div class="space-y-4">
+                <div>
+                  <label class="block text-sm font-medium text-secondary-dark mb-2">Kanalname</label>
+                  <input id="channel-name" type="text" 
+                    class="w-full px-4 py-2 bg-white border border-teal-300 rounded-lg text-teal-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="z.B. A400M Projekt">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-secondary-dark mb-2">Beschreibung</label>
+                  <textarea id="channel-description" 
+                    class="w-full px-4 py-2 bg-white border border-teal-300 rounded-lg text-teal-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                    rows="3"
+                    placeholder="Was ist der Zweck dieses Kanals?"></textarea>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-secondary-dark mb-2">Kanaltyp</label>
+                  <div class="flex gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="channel-type" value="open" checked class="w-4 h-4">
+                      <span class="text-secondary-dark">🌐 Öffentlich</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input type="radio" name="channel-type" value="invite-only" class="w-4 h-4">
+                      <span class="text-secondary-dark">🔒 Nur auf Einladung</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div class="flex gap-3 mt-6">
+                <button id="btn-cancel-channel" class="flex-1 px-4 py-2 rounded-lg text-secondary-dark bg-slate-200 hover:bg-slate-300 transition-all">
+                  Abbrechen
+                </button>
+                <button id="btn-confirm-channel" class="flex-1 px-4 py-2 rounded-lg font-medium transition-all btn-primary text-white">
+                  Erstellen
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Channels Grid -->
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            <div id="channels-list" class="md:col-span-2 lg:col-span-3">
+              <p class="text-secondary-dark text-center py-8">Noch keine Kanäle vorhanden. Erstelle einen!</p>
+            </div>
+          </div>
+
+          <!-- All Available Channels (for joining) -->
+          <div class="mt-12">
+            <h3 class="text-xl font-bold text-teal-700 mb-6">Verfügbare Kanäle</h3>
+            <div id="available-channels-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <p class="text-secondary-dark col-span-full text-center py-8">Alle öffentlichen Kanäle sind bereits beigetreten.</p>
+            </div>
+          </div>
+
+          <div class="mt-12">
+            <h3 class="text-xl font-bold text-teal-700 mb-6">Meine Einladungen</h3>
+            <div id="channel-invites-list" class="space-y-3">
+              <p class="text-secondary-dark">Keine offenen Einladungen.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Channel Detail Section ───────────────────────────── -->
+        <section id="section-channel-detail" class="hidden fade-in">
+          <div class="flex items-center gap-4 mb-6">
+            <button id="btn-back-channels" class="text-secondary-dark hover:text-teal-900 transition-all">← Zurück zu Kanälen</button>
+            <div>
+              <h2 id="channel-detail-name" class="text-2xl font-bold text-teal-900">Kanal Name</h2>
+              <p id="channel-detail-description" class="text-secondary-dark">Kanalbeschreibung</p>
+            </div>
+          </div>
+
+          <div class="grid lg:grid-cols-3 gap-6">
+            <!-- Messages -->
+            <div class="lg:col-span-2">
+              <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 h-96 flex flex-col shadow-sm">
+                <div id="messages-list" class="flex-1 overflow-y-auto space-y-4 mb-4">
+                  <p class="text-secondary-dark text-center py-8">Noch keine Nachrichten in diesem Kanal.</p>
+                </div>
+                <div class="flex gap-2">
+                  <input id="message-input" type="text" 
+                    class="flex-1 px-4 py-2 bg-white border border-teal-300 rounded-lg text-teal-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="Nachricht schreiben...">
+                  <button id="btn-send-message" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg font-medium transition-all">
+                    Senden
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Channel Info -->
+            <div class="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 h-fit shadow-sm">
+              <h3 class="text-lg font-semibold text-teal-900 mb-4">📊 Kanal Info</h3>
+              <div class="space-y-4 text-sm">
+                <div>
+                  <p class="text-secondary-dark">Typ</p>
+                  <p id="channel-type-display" class="text-teal-900 font-medium">Öffentlich</p>
+                </div>
+                <div>
+                  <p class="text-secondary-dark">Erstellt von</p>
+                  <p id="channel-creator-display" class="text-teal-900 font-medium">-</p>
+                </div>
+                <div>
+                  <p class="text-secondary-dark">Mitglieder</p>
+                  <p id="channel-members-count" class="text-teal-900 font-medium">0</p>
+                </div>
+                <div>
+                  <p class="text-secondary-dark mb-2">Mitglieder</p>
+                  <div id="channel-members-list" class="space-y-1">
+                    <p class="text-secondary-dark text-xs">Keine Mitglieder</p>
+                  </div>
+                </div>
+                <div>
+                  <button id="btn-leave-channel" class="w-full px-3 py-2 rounded-lg text-sm font-medium bg-rose-600 text-white hover:bg-rose-700 transition-all">
+                    Kanal verlassen
+                  </button>
+                </div>
+                <div id="channel-invite-controls" class="hidden pt-2 border-t border-teal-200">
+                  <p class="text-secondary-dark text-sm mb-2">Person einladen</p>
+                  <button id="btn-open-invite-modal" class="w-full px-3 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-all">
+                    Person einladen
+                  </button>
+                  <div id="channel-pending-invites" class="mt-2 text-xs text-secondary-dark"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-6 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 shadow-sm">
+            <h3 class="text-lg font-semibold text-teal-900 mb-4">📝 Kanal-Feedback</h3>
+            <div class="flex items-center gap-2 mb-4" id="channel-feedback-emojis">
+              <span class="text-sm text-secondary-dark mr-2">Stimmung:</span>
+              <button class="emoji-btn channel-feedback-emoji-btn p-2 text-2xl" data-emoji="😡" type="button">😡</button>
+              <button class="emoji-btn channel-feedback-emoji-btn p-2 text-2xl" data-emoji="😕" type="button">😕</button>
+              <button class="emoji-btn channel-feedback-emoji-btn p-2 text-2xl" data-emoji="😐" type="button">😐</button>
+              <button class="emoji-btn channel-feedback-emoji-btn p-2 text-2xl" data-emoji="🙂" type="button">🙂</button>
+              <button class="emoji-btn channel-feedback-emoji-btn p-2 text-2xl" data-emoji="😄" type="button">😄</button>
+            </div>
+            <div class="flex flex-col md:flex-row gap-3 mb-4">
+              <textarea id="channel-feedback-input"
+                class="w-full px-4 py-2 bg-white border border-teal-300 rounded-lg text-teal-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                rows="2" placeholder="Feedback zu diesem Kanal hinterlassen..."></textarea>
+              <button id="btn-send-feedback" class="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg font-medium transition-all">
+                Feedback senden
+              </button>
+            </div>
+            <div id="channel-feedback-list" class="space-y-3">
+              <p class="text-secondary-dark">Noch kein Feedback in diesem Kanal.</p>
+            </div>
+          </div>
+
+          <!-- Invite Modal -->
+          <div id="modal-channel-invite" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-2xl p-6 w-full max-w-md border border-teal-200">
+              <h3 class="text-xl font-bold text-teal-900 mb-4">Person in Kanal einladen</h3>
+              <div>
+                <label class="block text-sm font-medium text-secondary-dark mb-2">Benutzer</label>
+                <select id="channel-invite-user-modal" class="w-full px-3 py-2 bg-white border border-teal-300 rounded-lg text-teal-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                  <option value="">Benutzer waehlen</option>
+                </select>
+              </div>
+              <div class="flex gap-3 mt-6">
+                <button id="btn-cancel-invite-modal" class="flex-1 px-4 py-2 rounded-lg text-secondary-dark bg-slate-200 hover:bg-slate-300 transition-all">
+                  Abbrechen
+                </button>
+                <button id="btn-confirm-invite-modal" class="flex-1 px-4 py-2 rounded-lg font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition-all">
+                  Einladung senden
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ── Dashboard Section (Manager only) ─────────────────── -->
+        <section id="section-dashboard" class="hidden fade-in">
+          <h2 class="text-2xl font-bold text-teal-700 mb-6">Team-Übersicht</h2>
+
+          <div class="bg-slate-50/90 backdrop-blur-sm rounded-2xl p-4 border border-teal-200 shadow-sm mb-6">
+            <label for="dashboard-channel-select" class="block text-sm text-secondary-dark mb-2">Kanalansicht im Dashboard</label>
+            <div class="flex flex-col md:flex-row md:items-center gap-3">
+              <select id="dashboard-channel-select" class="w-full md:w-96 px-3 py-2 bg-white border border-teal-300 rounded-lg text-teal-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="">Kanal waehlen</option>
+              </select>
+              <p id="dashboard-channel-note" class="text-xs text-secondary-dark">Nur Kanaele, in denen du Mitglied bist, sind auswaehlbar.</p>
+            </div>
+          </div>
+
+          <!-- Trend Chart -->
+          <div class="bg-slate-50/90 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 shadow-sm mb-8">
+            <div class="flex items-center justify-between mb-4">
+              <h3 id="dashboard-chart-title" class="text-lg font-semibold flex items-center gap-2">
+                <span>📈</span> Stimmungsverlauf
+              </h3>
+              <div class="flex gap-2">
+                <button class="chart-filter px-3 py-1 rounded-lg text-sm bg-white text-teal-900 border border-teal-200 shadow-sm hover:bg-teal-50 transition-all" data-days="7">7 Tage</button>
+                <button class="chart-filter px-3 py-1 rounded-lg text-sm bg-indigo-600 text-white transition-all" data-days="30">30 Tage</button>
+                <button class="chart-filter px-3 py-1 rounded-lg text-sm bg-white text-teal-900 border border-teal-200 shadow-sm hover:bg-teal-50 transition-all" data-days="90">90 Tage</button>
+              </div>
+            </div>
+            <canvas id="trend-chart" height="80"></canvas>
+          </div>
+
+          <div class="grid md:grid-cols-2 gap-6 mb-8">
+
+            <!-- Department Stats -->
+            <div class="bg-slate-50/90 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 shadow-sm">
+              <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <span>🏢</span> <span id="dept-name">Abteilung</span>
+              </h3>
+              <div id="dept-stats" class="space-y-4">
+                <p class="text-secondary-dark">Keine Daten vorhanden.</p>
+              </div>
+            </div>
+
+            <!-- Company Stats -->
+            <div class="bg-slate-50/90 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 shadow-sm">
+              <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                <span>🌐</span> Unternehmen gesamt
+              </h3>
+              <div id="company-stats" class="space-y-4">
+                <p class="text-secondary-dark">Keine Daten vorhanden.</p>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Recent Feedback -->
+          <div class="bg-slate-50/90 backdrop-blur-sm rounded-2xl p-6 border border-teal-200 shadow-sm">
+            <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+              <span>💬</span> <span id="dashboard-comments-title">Aktuelle Kommentare (anonym)</span>
+            </h3>
+            <div id="recent-comments" class="space-y-3">
+              <p class="text-secondary-dark">Keine Kommentare vorhanden.</p>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+    </div>
+
+    <script src="js/store.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
