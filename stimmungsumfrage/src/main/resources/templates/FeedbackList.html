@@ -11,7 +11,7 @@
 <section layout:fragment="content" class="fade-in">
     <h2 class="page-heading mb-4">Feedbacks mit Text</h2>
 
-    <div class="card" th:if="${!#lists.isEmpty(feedbacks)}">
+    <div class="card surface-panel" th:if="${!#lists.isEmpty(feedbacks)}">
         <div class="table-responsive">
             <table class="table table-striped table-hover mb-0">
                 <thead class="table-dark">
@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <div class="card p-4 text-center" th:if="${#lists.isEmpty(feedbacks)}">
+    <div class="card surface-panel p-4 text-center" th:if="${#lists.isEmpty(feedbacks)}">
         <p class="text-secondary-dark mb-0">Keine Feedbacks mit Text gefunden.</p>
     </div>
 </section>

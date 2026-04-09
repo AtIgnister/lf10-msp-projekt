@@ -171,6 +171,10 @@ a {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+.surface-panel {
+  background: var(--bg-card-subtle) !important;
+}
+
 .card-header {
   border-radius: 1rem 1rem 0 0 !important;
   font-weight: 600;
@@ -198,7 +202,7 @@ a {
 .form-control,
 .form-select {
   border: 2px solid var(--color-coral);
-  background-color: var(--color-cream);
+  background-color: #ffffff;
   border-radius: 0.75rem;
   padding: 0.75rem 1rem;
   color: var(--color-dark);
@@ -213,7 +217,7 @@ a {
 .form-select:focus {
   border-color: var(--color-coral);
   box-shadow: 0 0 0 0.25rem rgba(255, 154, 141, 0.25);
-  background-color: var(--color-cream);
+  background-color: #ffffff;
 }
 
 /* ── Tables ──────────────────────────────────────────────────────────────── */
@@ -301,6 +305,81 @@ a {
 /* ── Text Utilities ──────────────────────────────────────────────────────── */
 .text-secondary-dark {
   color: var(--text-secondary);
+}
+
+/* ── Stat Bars (dashboard mood bars) ─────────────────────────────────────── */
+.stat-bar-track {
+  height: 0.5rem;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.stat-bar-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.4s ease;
+  background: #94a3b8;
+}
+
+.stat-bar-fill.good    { background: #34d399; }
+.stat-bar-fill.neutral { background: #fbbf24; }
+.stat-bar-fill.bad     { background: #f87171; }
+
+/* ── Emoji Buttons ───────────────────────────────────────────────────────── */
+.emoji-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  font-size: 1.75rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 0.75rem;
+}
+
+.emoji-btn:hover {
+  transform: scale(1.2);
+}
+
+.emoji-btn.selected {
+  transform: scale(1.3);
+  background: rgba(31, 191, 184, 0.2);
+}
+
+/* ── Scrollable Panels ───────────────────────────────────────────────────── */
+#channel-feedback-list {
+  max-height: min(40vh, 340px);
+  overflow-y: auto;
+  padding-right: 8px;
+  overscroll-behavior: contain;
+}
+
+#recent-comments {
+  max-height: min(46vh, 420px);
+  overflow-y: auto;
+  padding-right: 8px;
+  overscroll-behavior: contain;
+}
+
+#channel-feedback-list::-webkit-scrollbar,
+#recent-comments::-webkit-scrollbar {
+  width: 6px;
+}
+
+#channel-feedback-list::-webkit-scrollbar-track,
+#recent-comments::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#channel-feedback-list::-webkit-scrollbar-thumb,
+#recent-comments::-webkit-scrollbar-thumb {
+  background: rgba(71, 85, 105, 0.5);
+  border-radius: 3px;
+}
+
+#channel-feedback-list::-webkit-scrollbar-thumb:hover,
+#recent-comments::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.8);
 }
 
 /* ── Animations ──────────────────────────────────────────────────────────── */

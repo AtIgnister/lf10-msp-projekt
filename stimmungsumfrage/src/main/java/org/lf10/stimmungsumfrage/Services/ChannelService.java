@@ -13,7 +13,6 @@ import java.util.List;
 public class ChannelService {
 
     private final ChannelRepository channelRepository;
-    private final ChannelMessageRepository messageRepository;
     private final ChannelFeedbackRepository feedbackRepository;
     private final ChannelInviteRepository inviteRepository;
 
@@ -46,19 +45,6 @@ public class ChannelService {
     public void leaveChannel(Channel channel, User user) {
         channel.getMembers().remove(user);
         channelRepository.save(channel);
-    }
-
-    public List<ChannelMessage> getMessages(Channel channel) {
-        return messageRepository.findByChannelOrderByCreatedAtAsc(channel);
-    }
-
-    @Transactional
-    public ChannelMessage sendMessage(Channel channel, User sender, String content) {
-        ChannelMessage message = new ChannelMessage();
-        message.setChannel(channel);
-        message.setSender(sender);
-        message.setContent(content);
-        return messageRepository.save(message);
     }
 
     public List<ChannelFeedback> getFeedback(Channel channel) {

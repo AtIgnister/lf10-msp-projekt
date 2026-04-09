@@ -32,7 +32,7 @@
 <body>
 
 <!-- Header -->
-<header class="app-header sticky-top">
+<header class="app-header sticky-top" th:if="${currentUserDisplay != null}">
     <div class="container py-3 d-flex align-items-center justify-content-between">
         <a class="navbar-brand text-white fw-bold fs-5 text-decoration-none"
            th:href="@{/}">Team Stimmungsbarometer</a>
@@ -51,7 +51,7 @@
 </header>
 
 <!-- Navigation Tabs -->
-<nav class="app-nav">
+<nav class="app-nav" th:if="${currentUserDisplay != null}">
     <div class="container d-flex gap-2 py-2">
         <a class="nav-link" th:href="@{/}">Abstimmen</a>
         <a class="nav-link" th:href="@{/feedbacks}">Feedbacks</a>
@@ -61,10 +61,11 @@
     </div>
 </nav>
 
-<main class="app-content"
-      layout:fragment="content">
-    <!-- Page content will be inserted here -->
-</main>
+<div class="app-content">
+    <main layout:fragment="content">
+        <!-- Page content will be inserted here -->
+    </main>
+</div>
 
 <script>
     // Highlight active nav link based on current URL

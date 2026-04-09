@@ -4,23 +4,6 @@
       layout:decorate="~{layout}" lang="de">
 <head>
     <title th:text="${channel.name}">Kanal</title>
-    <style>
-        .messages-panel {
-            height: 24rem;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-        .messages-panel::-webkit-scrollbar { width: 6px; }
-        .messages-panel::-webkit-scrollbar-track { background: transparent; }
-        .messages-panel::-webkit-scrollbar-thumb { background: rgba(71,85,105,0.5); border-radius: 3px; }
-        .msg-own { background-color: var(--color-teal); color: #fff; }
-        .msg-other { background-color: #fff; border: 1px solid var(--border-card); }
-        .emoji-btn { transition: all 0.2s ease; cursor: pointer; border: none; background: none; font-size: 1.5rem; padding: 0.25rem; }
-        .emoji-btn:hover { transform: scale(1.2); }
-        .emoji-btn.selected { transform: scale(1.3); background: rgba(31,191,184,0.2); border-radius: 0.75rem; }
-        .feedback-panel { max-height: 20rem; overflow-y: auto; }
-    </style>
 </head>
 <body>
 <section layout:fragment="content" class="fade-in">
@@ -34,40 +17,9 @@
         </div>
     </div>
 
-    <div class="row g-4">
-        <!-- Messages Panel -->
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-body d-flex flex-column" style="height: 28rem;">
-                    <div class="messages-panel flex-grow-1 mb-3" id="messages-list">
-                        <div th:if="${#lists.isEmpty(messages)}" class="text-center text-secondary-dark py-5">
-                            Noch keine Nachrichten in diesem Kanal.
-                        </div>
-                        <div th:each="msg : ${messages}" class="mb-2"
-                             th:classappend="${msg.sender.id == currentUser.id ? 'd-flex justify-content-end' : 'd-flex justify-content-start'}">
-                            <div class="px-3 py-2 rounded-3" style="max-width: 75%;"
-                                 th:classappend="${msg.sender.id == currentUser.id ? 'msg-own' : 'msg-other'}">
-                                <small th:if="${msg.sender.id != currentUser.id}"
-                                       class="fw-semibold d-block mb-1"
-                                       th:text="${msg.sender.firstname}">Sender</small>
-                                <span th:text="${msg.content}">Nachricht</span>
-                                <small class="d-block mt-1" style="opacity: 0.7;"
-                                       th:text="${#temporals.format(msg.createdAt, 'HH:mm')}">12:00</small>
-                            </div>
-                        </div>
-                    </div>
-                    <form th:action="@{/channels/{id}/messages(id=${channel.id})}" method="post" class="d-flex gap-2">
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                        <input type="text" name="content" class="form-control" placeholder="Nachricht schreiben..." required>
-                        <button type="submit" class="btn btn-primary">Senden</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <!-- Channel Info Sidebar -->
-        <div class="col-lg-4">
-            <div class="card">
+    <div class="row g-4 mb-4">
+        <div class="col-md-6">
+            <div class="card h-100">
                 <div class="card-body">
                     <h5 class="mb-3">📊 Kanal Info</h5>
                     <div class="mb-3">
@@ -89,30 +41,35 @@
                         <button type="submit" class="btn btn-danger w-100"
                                 onclick="return confirm('Kanal wirklich verlassen?')">Kanal verlassen</button>
                     </form>
+                </div>
+            </div>
+        </div>
 
-                    <!-- Invite Section (invite-only channels) -->
-                    <div th:if="${channel.channelType.name() == 'INVITE_ONLY'}" class="mt-3 pt-3 border-top">
-                        <small class="text-secondary-dark d-block mb-2">Person einladen</small>
-                        <form th:action="@{/channels/{id}/invite(id=${channel.id})}" method="post"
-                              th:if="${invitableUsers != null && !invitableUsers.isEmpty()}">
-                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                            <select name="userId" class="form-select mb-2" required>
-                                <option value="">Benutzer w&auml;hlen</option>
-                                <option th:each="u : ${invitableUsers}" th:value="${u.id}"
-                                        th:text="${u.firstname + ' ' + u.lastname}"></option>
-                            </select>
-                            <button type="submit" class="btn btn-primary w-100">Einladung senden</button>
-                        </form>
-                        <small th:if="${invitableUsers == null || invitableUsers.isEmpty()}"
-                               class="text-secondary-dark">Keine weiteren Benutzer zum Einladen.</small>
+        <!-- Invite Section (invite-only channels) -->
+        <div class="col-md-6" th:if="${channel.channelType.name() == 'INVITE_ONLY'}">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="mb-3">✉️ Einladungen</h5>
+                    <small class="text-secondary-dark d-block mb-2">Person einladen</small>
+                    <form th:action="@{/channels/{id}/invite(id=${channel.id})}" method="post"
+                          th:if="${invitableUsers != null && !invitableUsers.isEmpty()}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <select name="userId" class="form-select mb-2" required>
+                            <option value="">Benutzer w&auml;hlen</option>
+                            <option th:each="u : ${invitableUsers}" th:value="${u.id}"
+                                    th:text="${u.firstname + ' ' + u.lastname}"></option>
+                        </select>
+                        <button type="submit" class="btn btn-primary w-100">Einladung senden</button>
+                    </form>
+                    <small th:if="${invitableUsers == null || invitableUsers.isEmpty()}"
+                           class="text-secondary-dark">Keine weiteren Benutzer zum Einladen.</small>
 
-                        <div th:if="${pendingInvites != null && !pendingInvites.isEmpty()}" class="mt-2">
-                            <small class="text-secondary-dark">Ausstehend:
-                                <span th:each="inv, stat : ${pendingInvites}">
-                                    <span th:text="${inv.invitedUser.firstname}">Name</span><span th:if="${!stat.last}">, </span>
-                                </span>
-                            </small>
-                        </div>
+                    <div th:if="${pendingInvites != null && !pendingInvites.isEmpty()}" class="mt-3">
+                        <small class="text-secondary-dark">Ausstehend:
+                            <span th:each="inv, stat : ${pendingInvites}">
+                                <span th:text="${inv.invitedUser.firstname}">Name</span><span th:if="${!stat.last}">, </span>
+                            </span>
+                        </small>
                     </div>
                 </div>
             </div>
@@ -120,7 +77,7 @@
     </div>
 
     <!-- Feedback Section -->
-    <div class="card mt-4">
+    <div class="card">
         <div class="card-body">
             <h5 class="mb-3">📝 Kanal-Feedback</h5>
             <form th:action="@{/channels/{id}/feedback(id=${channel.id})}" method="post" class="mb-4">
@@ -141,7 +98,7 @@
                 </div>
             </form>
 
-            <div class="feedback-panel">
+            <div id="channel-feedback-list" class="feedback-panel">
                 <div th:if="${#lists.isEmpty(feedbackList)}" class="text-secondary-dark">
                     Noch kein Feedback in diesem Kanal.
                 </div>
@@ -149,7 +106,7 @@
                     <div class="card-body py-2 px-3">
                         <div class="d-flex justify-content-between mb-1">
                             <small class="text-secondary-dark"
-                                   th:text="'von ' + ${fb.user.firstname + ' ' + fb.user.lastname}">von Name</small>
+                                   th:text="${'von ' + fb.user.firstname + ' ' + fb.user.lastname}">von Name</small>
                             <small class="text-secondary-dark"
                                    th:text="${#temporals.format(fb.createdAt, 'dd.MM.yyyy HH:mm')}">Datum</small>
                         </div>
@@ -163,11 +120,7 @@
         </div>
     </div>
 
-    <script th:inline="javascript">
-        // Scroll messages to bottom on load
-        const msgList = document.getElementById('messages-list');
-        if (msgList) msgList.scrollTop = msgList.scrollHeight;
-
+    <script>
         function selectEmoji(btn, emoji) {
             document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
             btn.classList.add('selected');

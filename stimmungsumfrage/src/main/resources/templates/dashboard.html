@@ -4,33 +4,34 @@
       layout:decorate="~{layout}" lang="de">
 <head>
     <title>Dashboard</title>
-    <style>
-        .stat-bar-track {
-            width: 100%;
-            background-color: #e2e8f0;
-            border-radius: 9999px;
-            height: 0.5rem;
-            margin-top: 0.25rem;
-        }
-        .stat-bar-fill {
-            height: 0.5rem;
-            border-radius: 9999px;
-            transition: width 0.5s ease;
-        }
-        .stat-bar-fill.good    { background-color: #10b981; }
-        .stat-bar-fill.neutral { background-color: #eab308; }
-        .stat-bar-fill.bad     { background-color: #ef4444; }
-    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
 <section layout:fragment="content" class="fade-in">
 
     <h2 class="page-heading mb-4">Team-&Uuml;bersicht</h2>
 
+    <!-- Trend Chart -->
+    <div class="card surface-panel mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="d-flex align-items-center gap-2 mb-0">
+                    <span>📈</span> Stimmungsverlauf
+                </h5>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-secondary chart-filter" data-days="7">7 Tage</button>
+                    <button class="btn btn-sm btn-primary chart-filter active" data-days="30">30 Tage</button>
+                    <button class="btn btn-sm btn-secondary chart-filter" data-days="90">90 Tage</button>
+                </div>
+            </div>
+            <canvas id="trend-chart" height="80"></canvas>
+        </div>
+    </div>
+
     <div class="row g-4 mb-4">
         <!-- Mood Statistics -->
         <div class="col-md-6">
-            <div class="card h-100">
+            <div class="card surface-panel h-100">
                 <div class="card-body">
                     <h5 class="mb-4 d-flex align-items-center gap-2">
                         <span>📊</span> Stimmungsverteilung
@@ -69,10 +70,10 @@
 
         <!-- Quick Info -->
         <div class="col-md-6">
-            <div class="card h-100">
+            <div class="card surface-panel h-100">
                 <div class="card-body">
                     <h5 class="mb-4 d-flex align-items-center gap-2">
-                        <span>🏢</span> &Uuml;bersicht
+                        <span>🌐</span> &Uuml;bersicht
                     </h5>
                     <div class="d-flex flex-column gap-3">
                         <div th:each="mood : ${moodCounts}" class="d-flex align-items-center gap-3">
@@ -94,7 +95,7 @@
     </div>
 
     <!-- Recent Feedbacks -->
-    <div class="card">
+    <div class="card surface-panel">
         <div class="card-body">
             <h5 class="mb-4 d-flex align-items-center gap-2">
                 <span>💬</span> Aktuelle Kommentare (anonym)
@@ -103,7 +104,7 @@
                 Keine Kommentare vorhanden.
             </div>
             <div th:if="${recentFeedbacks != null && !#lists.isEmpty(recentFeedbacks)}"
-                 class="d-flex flex-column gap-2" style="max-height: 20rem; overflow-y: auto;">
+                 id="recent-comments" class="d-flex flex-column gap-2">
                 <div th:each="fb : ${recentFeedbacks}" class="card">
                     <div class="card-body py-2 px-3">
                         <div class="d-flex align-items-center gap-2 mb-1">
@@ -113,7 +114,7 @@
                                 <span th:case="'SAD'">😢</span>
                             </span>
                             <small class="text-secondary-dark"
-                                   th:text="${fb.mood.moodName} + ' • ' + ${fb.department.name}">Mood</small>
+                                   th:text="${fb.mood.moodName + ' • ' + fb.department.name}">Mood</small>
                             <small class="text-secondary-dark ms-auto"
                                    th:text="${#temporals.format(fb.createdAt, 'dd.MM. HH:mm')}">Datum</small>
                         </div>
@@ -123,6 +124,70 @@
             </div>
         </div>
     </div>
+
+    <script th:inline="javascript">
+        const allLabels  = /*[[${chartLabels}]]*/  [];
+        const allHappy   = /*[[${chartHappy}]]*/   [];
+        const allNeutral = /*[[${chartNeutral}]]*/ [];
+        const allSad     = /*[[${chartSad}]]*/     [];
+
+        let activeDays = 30;
+
+        function slice(arr, days) { return arr.slice(-days); }
+
+        const chart = new Chart(document.getElementById('trend-chart'), {
+            type: 'line',
+            data: {
+                labels: slice(allLabels, activeDays),
+                datasets: [
+                    {
+                        label: 'Positiv 😊',
+                        data: slice(allHappy, activeDays),
+                        borderColor: '#34d399',
+                        backgroundColor: 'rgba(52,211,153,0.1)',
+                        tension: 0.4, fill: true, pointRadius: 2
+                    },
+                    {
+                        label: 'Neutral 😐',
+                        data: slice(allNeutral, activeDays),
+                        borderColor: '#fbbf24',
+                        backgroundColor: 'rgba(251,191,36,0.1)',
+                        tension: 0.4, fill: true, pointRadius: 2
+                    },
+                    {
+                        label: 'Negativ 😢',
+                        data: slice(allSad, activeDays),
+                        borderColor: '#f87171',
+                        backgroundColor: 'rgba(248,113,113,0.1)',
+                        tension: 0.4, fill: true, pointRadius: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                interaction: { mode: 'index', intersect: false },
+                plugins: { legend: { position: 'top' } },
+                scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+            }
+        });
+
+        document.querySelectorAll('.chart-filter').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const days = parseInt(btn.dataset.days);
+                activeDays = days;
+                chart.data.labels = slice(allLabels, days);
+                chart.data.datasets[0].data = slice(allHappy, days);
+                chart.data.datasets[1].data = slice(allNeutral, days);
+                chart.data.datasets[2].data = slice(allSad, days);
+                chart.update();
+                document.querySelectorAll('.chart-filter').forEach(b => {
+                    b.className = (b === btn)
+                        ? 'btn btn-sm btn-primary chart-filter active'
+                        : 'btn btn-sm btn-secondary chart-filter';
+                });
+            });
+        });
+    </script>
 
 </section>
 </body>

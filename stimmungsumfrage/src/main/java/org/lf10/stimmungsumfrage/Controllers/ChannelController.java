@@ -65,10 +65,8 @@ public class ChannelController {
         }
 
         model.addAttribute("channel", channel);
-        model.addAttribute("messages", channelService.getMessages(channel));
         model.addAttribute("feedbackList", channelService.getFeedback(channel));
         model.addAttribute("members", channel.getMembers());
-        model.addAttribute("currentUser", user);
 
         if (channel.getChannelType() == ChannelType.INVITE_ONLY) {
             model.addAttribute("pendingInvites", channelService.getChannelPendingInvites(channel));
@@ -102,21 +100,6 @@ public class ChannelController {
         return "redirect:/channels";
     }
 
-    @PostMapping("/{id}/messages")
-    public String sendMessage(@PathVariable Long id,
-                              @RequestParam String content,
-                              Authentication auth) {
-        User user = getAuthenticatedUser(auth);
-        Channel channel = channelRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("Channel not found"));
-
-        if (!channel.getMembers().contains(user)) {
-            return "redirect:/channels";
-        }
-
-        channelService.sendMessage(channel, user, content);
-        return "redirect:/channels/" + id;
-    }
 
     @PostMapping("/{id}/feedback")
     public String sendFeedback(@PathVariable Long id,
