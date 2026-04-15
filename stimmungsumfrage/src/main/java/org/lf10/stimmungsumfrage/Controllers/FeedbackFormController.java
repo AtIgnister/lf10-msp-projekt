@@ -7,7 +7,11 @@ import org.lf10.stimmungsumfrage.Repositories.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/")
@@ -17,6 +21,7 @@ public class FeedbackFormController {
     private final UserRepository userRepository;
     private final MoodRepository moodRepository;
     private final FeedbackSubmissionRepository submissionRepository;
+    private final DepartmentRepository departmentRepository;
 
     // Display feedback form
     @GetMapping
@@ -53,8 +58,19 @@ public class FeedbackFormController {
 
     // Zeigt alle Feedbacks, deren Text nicht leer ist.
     @GetMapping("feedbacks")
-    public String getFeedbacksWithText(Model model) {
-        model.addAttribute("feedbacks", submissionRepository.findAllWithNonEmptyFeedbackText());
+    public String getFeedbacksWithText(
+            @RequestParam(required = false) Long departmentId,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            Model model
+    ) {
+        LocalDateTime startDate = date != null ? date.atStartOfDay() : null;
+        LocalDateTime endDate = date != null ? date.plusDays(1).atStartOfDay() : null;
+
+        model.addAttribute("feedbacks",
+                submissionRepository.findAllWithNonEmptyFeedbackTextFiltered(departmentId, startDate, endDate));
+        model.addAttribute("departments", departmentRepository.findAll());
+        model.addAttribute("selectedDepartmentId", departmentId);
+        model.addAttribute("selectedDate", date);
         return "FeedbackList";
     }
 }
