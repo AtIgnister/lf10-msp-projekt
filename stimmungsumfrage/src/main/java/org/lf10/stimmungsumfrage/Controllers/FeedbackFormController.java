@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Sort;
 
 @Controller
 @RequestMapping("/")
@@ -55,6 +56,35 @@ public class FeedbackFormController {
     @GetMapping("feedbacks")
     public String getFeedbacksWithText(Model model) {
         model.addAttribute("feedbacks", submissionRepository.findAllWithNonEmptyFeedbackText());
+        return "FeedbackList";
+    }
+    @GetMapping("feedbacks/id/{direction}")
+    public String getAllSortedByID(Model model, @PathVariable String direction) {
+
+        return sortFeedbackList("id", direction, model);
+    }
+    @GetMapping("feedbacks/department/{direction}")
+    public String getAllSortedByAbteilung(Model model, @PathVariable String direction) {
+
+        return sortFeedbackList("department", direction, model);
+    }
+    @GetMapping("feedbacks/mood/{direction}")
+    public String getAllSortedByMood(Model model, @PathVariable String direction) {
+
+        return sortFeedbackList("mood", direction, model);
+    }
+    @GetMapping("feedbacks/created_at/{direction}")
+    public String getAllSortedByErstellung(Model model, @PathVariable String direction) {
+
+        return sortFeedbackList("createdAt", direction, model);
+    }
+
+    private String sortFeedbackList(String propertyName, String direction, Model model)
+    {
+        Sort sort = direction.equalsIgnoreCase("asc")
+        ? Sort.by(propertyName).ascending()
+        : Sort.by(propertyName).descending();
+        model.addAttribute("feedbacks", submissionRepository.findAllSorted(sort));
         return "FeedbackList";
     }
 }

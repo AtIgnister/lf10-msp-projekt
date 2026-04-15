@@ -6,6 +6,7 @@ import org.lf10.stimmungsumfrage.Models.Department;
 import org.lf10.stimmungsumfrage.Models.Mood;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,12 +24,20 @@ public interface FeedbackSubmissionRepository extends JpaRepository<FeedbackSubm
 
     @Query("SELECT fs FROM FeedbackSubmission fs WHERE fs.feedbackText IS NOT NULL AND TRIM(fs.feedbackText) <> ''")
     List<FeedbackSubmission> findAllWithNonEmptyFeedbackText();
+    @Query("""
+        SELECT fs 
+        FROM FeedbackSubmission fs 
+        WHERE fs.feedbackText IS NOT NULL AND 
+        TRIM(fs.feedbackText) <> '' 
+            """)
+    List<FeedbackSubmission> findAllSorted(Sort sort);
 
     @Query("""
-    SELECT m.moodName AS moodName, COUNT(f) AS count
-    FROM Mood m
-    LEFT JOIN FeedbackSubmission f ON f.mood = m
-    GROUP BY m.moodName
+        SELECT m.moodName AS moodName, COUNT(f) AS count
+        FROM Mood m
+        LEFT JOIN FeedbackSubmission f 
+        ON f.mood = m
+        GROUP BY m.moodName
 """)
     List<MoodCount> countSubmissionsByMood();
 }
