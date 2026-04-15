@@ -9,14 +9,14 @@
 
 <body>
 <section layout:fragment="content" class="fade-in">
-    <h2 class="page-heading mb-4">Feedbacks mit Text</h2>
+    <h2 class="page-heading mb-4">Kanal-Feedbacks</h2>
 
     <div class="card surface-panel p-3 mb-4">
         <form class="row g-3 align-items-end" method="get" th:action="@{/feedbacks}">
-            <div class="col-12 col-md-5">
-                <label class="form-label" for="departmentId">Kanal (Abteilung)</label>
+            <div class="col-12 col-md-4">
+                <label class="form-label" for="departmentId">Abteilung</label>
                 <select class="form-select" id="departmentId" name="departmentId">
-                    <option value="">Alle Kanaele</option>
+                    <option value="">Alle Abteilungen</option>
                     <option th:each="department : ${departments}"
                             th:value="${department.id}"
                             th:text="${department.name}"
@@ -27,12 +27,25 @@
             </div>
 
             <div class="col-12 col-md-4">
+                <label class="form-label" for="channelId">Kanal (nur meine)</label>
+                <select class="form-select" id="channelId" name="channelId">
+                    <option value="">Alle meine Kanaele</option>
+                    <option th:each="channel : ${myChannels}"
+                            th:value="${channel.id}"
+                            th:text="${channel.name}"
+                            th:selected="${selectedChannelId != null and selectedChannelId == channel.id}">
+                        Team Channel
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-2">
                 <label class="form-label" for="date">Datum</label>
                 <input class="form-control" id="date" name="date" type="date"
                        th:value="${selectedDate != null ? #temporals.format(selectedDate, 'yyyy-MM-dd') : ''}">
             </div>
 
-            <div class="col-12 col-md-3 d-flex gap-2">
+            <div class="col-12 col-md-2 d-flex gap-2">
                 <button class="btn btn-primary flex-grow-1" type="submit">Filtern</button>
                 <a class="btn btn-secondary" th:href="@{/feedbacks}">Reset</a>
             </div>
@@ -45,18 +58,22 @@
                 <thead class="table-dark">
                 <tr>
                     <th>ID</th>
+                    <th>Kanal</th>
                     <th>Abteilung</th>
+                    <th>Benutzer</th>
                     <th>Stimmung</th>
-                    <th>Feedback</th>
+                    <th>Kommentar</th>
                     <th>Erstellt am</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:each="feedback : ${feedbacks}">
                     <td th:text="${feedback.id}">1</td>
-                    <td th:text="${feedback.department.name}">IT</td>
-                    <td th:text="${feedback.mood.moodName}">HAPPY</td>
-                    <td th:text="${feedback.feedbackText}">Sehr gut</td>
+                    <td th:text="${feedback.channel.name}">Team</td>
+                    <td th:text="${feedback.user.department.name}">IT</td>
+                    <td th:text="${feedback.user.firstname + ' ' + feedback.user.lastname}">Max Mustermann</td>
+                    <td th:text="${feedback.emoji != null and !#strings.isEmpty(feedback.emoji) ? feedback.emoji : '-'}">🙂</td>
+                    <td th:text="${feedback.comment != null and !#strings.isEmpty(feedback.comment) ? feedback.comment : '-'}">Sehr gut</td>
                     <td th:text="${#temporals.format(feedback.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026 10:00</td>
                 </tr>
                 </tbody>
@@ -65,7 +82,7 @@
     </div>
 
     <div class="card surface-panel p-4 text-center" th:if="${#lists.isEmpty(feedbacks)}">
-        <p class="text-secondary-dark mb-0">Keine Feedbacks mit Text gefunden.</p>
+        <p class="text-secondary-dark mb-0">Keine Kanal-Feedbacks gefunden.</p>
     </div>
 </section>
 </body>

@@ -22,6 +22,8 @@ public class FeedbackFormController {
     private final MoodRepository moodRepository;
     private final FeedbackSubmissionRepository submissionRepository;
     private final DepartmentRepository departmentRepository;
+    private final ChannelRepository channelRepository;
+    private final ChannelFeedbackRepository channelFeedbackRepository;
 
     // Display feedback form
     @GetMapping
@@ -60,16 +62,27 @@ public class FeedbackFormController {
     @GetMapping("feedbacks")
     public String getFeedbacksWithText(
             @RequestParam(required = false) Long departmentId,
+            @RequestParam(required = false) Long channelId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            Authentication authentication,
             Model model
     ) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
+
+        var myChannels = channelRepository.findByMember(user);
+        Long selectedChannelId = myChannels.stream()
+                .anyMatch(channel -> channel.getId().equals(channelId)) ? channelId : null;
+
         LocalDateTime startDate = date != null ? date.atStartOfDay() : null;
         LocalDateTime endDate = date != null ? date.plusDays(1).atStartOfDay() : null;
 
         model.addAttribute("feedbacks",
-                submissionRepository.findAllWithNonEmptyFeedbackTextFiltered(departmentId, startDate, endDate));
+                channelFeedbackRepository.findFilteredForFeedbackList(departmentId, selectedChannelId, startDate, endDate));
         model.addAttribute("departments", departmentRepository.findAll());
+        model.addAttribute("myChannels", myChannels);
         model.addAttribute("selectedDepartmentId", departmentId);
+        model.addAttribute("selectedChannelId", selectedChannelId);
         model.addAttribute("selectedDate", date);
         return "FeedbackList";
     }
