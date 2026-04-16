@@ -54,7 +54,7 @@
 <nav class="app-nav" th:if="${currentUserDisplay != null}">
     <div class="container d-flex gap-2 py-2">
         <a class="nav-link" th:href="@{/}">Abstimmen</a>
-        <a class="nav-link" th:href="@{/feedbacks}">Feedbacks</a>
+        <a class="nav-link" th:href="@{/feedbacks}" th:if="${isAdmin}">Feedbacks</a>
         <a class="nav-link" th:href="@{/channels}">Kan&auml;le</a>
         <a class="nav-link" th:href="@{/dashboard}" th:if="${isAdmin}">Dashboard</a>
         <a class="nav-link" th:href="@{/admin/users}" th:if="${isAdmin}">Benutzer</a>
