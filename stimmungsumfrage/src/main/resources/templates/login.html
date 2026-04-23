@@ -1,64 +1,60 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}">
+      layout:decorate="~{layout}" lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .login-card {
-            width: 100%;
-            max-width: 400px;
-        }
-    </style>
+    <title>Anmelden</title>
 </head>
 <body>
-<section class="d-flex align-items-center justify-content-center vh-100" layout:fragment="content">
-<div class="card shadow login-card">
-    <div class="card-body p-4">
+<section class="login-page" layout:fragment="content">
+    <div style="width: 100%; max-width: 28rem;">
 
-        <h4 class="text-center mb-4">Sign In</h4>
-
-        <!-- Error Message -->
-        <div th:if="${param.error}" class="alert alert-danger">
-            Invalid username or password
+        <!-- Branding -->
+        <div class="login-branding">
+            <span class="login-icon">📊</span>
+            <h1 class="login-title">Team Stimmungsbarometer</h1>
+            <p class="login-subtitle">Teile deine Stimmung &ndash; anonym &amp; ehrlich</p>
         </div>
 
-        <!-- Logout Message -->
-        <div th:if="${param.logout}" class="alert alert-success">
-            You have been logged out
+        <!-- Login Card -->
+        <div class="login-card">
+
+            <!-- Error Message -->
+            <div th:if="${param.error}" class="alert alert-danger mb-3">
+                Ungültiger Benutzername oder Passwort
+            </div>
+
+            <!-- Logout Message -->
+            <div th:if="${param.logout}" class="alert alert-success mb-3">
+                Du wurdest erfolgreich abgemeldet
+            </div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Benutzername</label>
+                    <input type="text"
+                           name="username"
+                           class="form-control"
+                           placeholder="Dein Benutzername"
+                           required autofocus>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Passwort</label>
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="••••••••"
+                           required>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-3">
+                    Anmelden
+                </button>
+            </form>
         </div>
-
-        <form th:action="@{/login}" method="post">
-
-            <div class="mb-3">
-                <label class="form-label">Username</label>
-                <input type="text"
-                       name="username"
-                       class="form-control"
-                       placeholder="Enter username"
-                       required autofocus>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Password</label>
-                <input type="password"
-                       name="password"
-                       class="form-control"
-                       placeholder="Enter password"
-                       required>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">
-                Login
-            </button>
-        </form>
-
     </div>
-</div>
 </section>
 </body>
 </html>
