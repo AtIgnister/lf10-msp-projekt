@@ -1,5 +1,6 @@
 package org.lf10.stimmungsumfrage.Config;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Repositories.UserRepository;
 import org.springframework.security.core.Authentication;
@@ -12,6 +13,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 public class GlobalModelAttributes {
 
     private final UserRepository userRepository;
+
+    @ModelAttribute("currentPath")
+    public String currentPath(HttpServletRequest request) {
+        return request.getRequestURI();
+    }
 
     @ModelAttribute
     public void addGlobalAttributes(Authentication authentication, Model model) {

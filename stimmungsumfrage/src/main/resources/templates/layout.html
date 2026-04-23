@@ -53,11 +53,10 @@
 <!-- Navigation Tabs -->
 <nav class="app-nav" th:if="${currentUserDisplay != null}">
     <div class="container d-flex gap-2 py-2">
-        <a class="nav-link" th:href="@{/}">Abstimmen</a>
-        <a class="nav-link" th:href="@{/feedbacks}">Feedbacks</a>
-        <a class="nav-link" th:href="@{/channels}">Kan&auml;le</a>
-        <a class="nav-link" th:href="@{/dashboard}" th:if="${isAdmin}">Dashboard</a>
-        <a class="nav-link" th:href="@{/admin/users}" th:if="${isAdmin}">Benutzer</a>
+        <a class="nav-link" th:classappend="${currentPath.startsWith('/feedbacks')} ? 'active'" th:href="@{/feedbacks}">Feedbacks</a>
+        <a class="nav-link" th:classappend="${currentPath.startsWith('/channels')} ? 'active'" th:href="@{/channels}">Kan&auml;le</a>
+        <a class="nav-link" th:classappend="${currentPath.startsWith('/dashboard')} ? 'active'" th:href="@{/dashboard}" th:if="${isAdmin}">Dashboard</a>
+        <a class="nav-link" th:classappend="${currentPath.startsWith('/admin/users')} ? 'active'" th:href="@{/admin/users}" th:if="${isAdmin}">Benutzer</a>
     </div>
 </nav>
 
@@ -66,17 +65,6 @@
         <!-- Page content will be inserted here -->
     </main>
 </div>
-
-<script>
-    // Highlight active nav link based on current URL
-    document.querySelectorAll('.app-nav .nav-link').forEach(function(link) {
-        var href = link.getAttribute('href');
-        var path = window.location.pathname;
-        if (href === path || (href !== '/' && path.startsWith(href))) {
-            link.classList.add('active');
-        }
-    });
-</script>
 
 </body>
 </html>
