@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="de">
+<head>
+    <title>Neuer Kanal</title>
+</head>
+<body>
+<section layout:fragment="content" class="fade-in">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card surface-panel">
+                <div class="card-header">
+                    <h4 class="mb-0">Neuen Kanal erstellen</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/channels}" method="post">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+                        <div class="mb-3">
+                            <label class="form-label" for="name">Kanalname</label>
+                            <input type="text" class="form-control" name="name" id="name"
+                                   required placeholder="z.B. Kantine">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="description">Beschreibung</label>
+                            <textarea class="form-control" name="description" id="description"
+                                      rows="3" placeholder="Was ist der Zweck dieses Kanals?"></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Kanaltyp</label>
+                            <div class="d-flex gap-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="channelType"
+                                           value="open" id="type-open" checked>
+                                    <label class="form-check-label" for="type-open">🌐 &Ouml;ffentlich</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="channelType"
+                                           value="invite-only" id="type-invite">
+                                    <label class="form-check-label" for="type-invite">🔒 Nur auf Einladung</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary flex-grow-1">Erstellen</button>
+                            <a th:href="@{/channels}" class="btn btn-secondary">Abbrechen</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

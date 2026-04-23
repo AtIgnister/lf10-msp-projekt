@@ -55,7 +55,7 @@ public class UserController {
             model.addAttribute("roles", roleRepository.findAll());
             return new ModelAndView("users/create", HttpStatus.BAD_REQUEST);
         }
-        userRepository.save(user); // Hash password first in service
+        userService.registerUser(user);
         return new ModelAndView("redirect:/admin/users");
     }
 

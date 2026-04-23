@@ -103,9 +103,9 @@ public class UserControllerTests {
                 .setRole(validRole)
                 .setHasSubmittedFeedback(false);
 
-        when(userRepository.save(any(User.class))).thenReturn(newUser);
+        when(userService.registerUser(any(User.class))).thenReturn(newUser);
 
-        Mockito.clearInvocations(userRepository);
+        Mockito.clearInvocations(userService);
 
         mockMvc.perform(post("/admin/users")
                         .with(user(mockAdmin))
@@ -121,7 +121,7 @@ public class UserControllerTests {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/admin/users"));
 
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userService, times(1)).registerUser(any(User.class));
     }
 
     @Test

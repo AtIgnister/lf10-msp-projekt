@@ -4,37 +4,69 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 <head>
-    <title>Feedbacks mit Text</title>
+    <title>Feedbacks</title>
 </head>
 
 <body>
-<section layout:fragment="content">
-    <h2 class="mb-3">Feedbacks mit Text</h2>
+<section layout:fragment="content" class="fade-in">
+    <h2 class="page-heading mb-4">Feedbacks</h2>
 
-    <div class="table-responsive" th:if="${!#lists.isEmpty(feedbacks)}">
-        <table class="table table-striped table-bordered align-middle">
-            <thead>
-            <tr>
-                <th>ID <a href="/feedbacks/id/desc">^</a><a href="/feedbacks/id/asc">v</a></th>
-                <th>Abteilung <a href="/feedbacks/department/desc">^</a><a href="/feedbacks/department/asc">v</a></th>
-                <th>Stimmung <a href="/feedbacks/mood/desc">^</a><a href="/feedbacks/mood/asc">v</a></th>
-                <th>Feedback </th>
-                <th>Erstellt am <a href="/feedbacks/created_at/desc">^</a><a href="/feedbacks/created_at/asc">v</a></th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="feedback : ${feedbacks}">
-                <td th:text="${feedback.id}">1</td>
-                <td th:text="${feedback.department.name}">IT</td>
-                <td th:text="${feedback.mood.moodName}">HAPPY</td>
-                <td th:text="${feedback.feedbackText}">Sehr gut</td>
-                <td th:text="${#temporals.format(feedback.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026 10:00</td>
-            </tr>
-            </tbody>
-        </table>
+    <div class="card surface-panel p-3 mb-4">
+        <form class="row g-3 align-items-end" method="get" th:action="@{/feedbacks}">
+            <div class="col-12 col-md-4">
+                <label class="form-label" for="departmentId">Abteilung</label>
+                <select class="form-select" id="departmentId" name="departmentId">
+                    <option value="">Alle Abteilungen</option>
+                    <option th:each="department : ${departments}"
+                            th:value="${department.id}"
+                            th:text="${department.name}"
+                            th:selected="${selectedDepartmentId != null and selectedDepartmentId == department.id}">
+                        IT
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-3">
+                <label class="form-label" for="date">Datum</label>
+                <input class="form-control" id="date" name="date" type="date"
+                       th:value="${selectedDate != null ? #temporals.format(selectedDate, 'yyyy-MM-dd') : ''}">
+            </div>
+
+            <div class="col-12 col-md-3 d-flex gap-2">
+                <button class="btn btn-primary flex-grow-1" type="submit">Filtern</button>
+                <a class="btn btn-secondary" th:href="@{/feedbacks}">Reset</a>
+            </div>
+        </form>
     </div>
 
-    <p class="text-muted" th:if="${#lists.isEmpty(feedbacks)}">Keine Feedbacks mit Text gefunden.</p>
+    <div class="card surface-panel" th:if="${!#lists.isEmpty(feedbacks)}">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Abteilung</th>
+                    <th>Stimmung</th>
+                    <th>Kommentar</th>
+                    <th>Erstellt am</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="feedback : ${feedbacks}">
+                    <td th:text="${feedback.id}">1</td>
+                    <td th:text="${feedback.department.name}">IT</td>
+                    <td th:text="${feedback.mood.moodName}">HAPPY</td>
+                    <td th:text="${feedback.feedbackText}">Sehr gut</td>
+                    <td th:text="${#temporals.format(feedback.createdAt, 'dd.MM.yyyy HH:mm')}">01.01.2026 10:00</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card surface-panel p-4 text-center" th:if="${#lists.isEmpty(feedbacks)}">
+        <p class="text-secondary-dark mb-0">Keine Feedbacks gefunden.</p>
+    </div>
 </section>
 </body>
 </html>

@@ -37,6 +37,15 @@ public class FeedbackFormControllerTest {
     private FeedbackSubmissionRepository feedbackSubmissionRepository;
 
     @MockitoBean
+    private DepartmentRepository departmentRepository;
+
+    @MockitoBean
+    private ChannelRepository channelRepository;
+
+    @MockitoBean
+    private ChannelFeedbackRepository channelFeedbackRepository;
+
+    @MockitoBean
     private FeedbackTypeRepository feedbackTypeRepository;
 
     @MockitoBean
