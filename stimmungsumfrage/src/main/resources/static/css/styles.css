@@ -327,6 +327,12 @@ a {
 .stat-bar-fill.bad     { background: #f87171; }
 
 /* ── Emoji Buttons ───────────────────────────────────────────────────────── */
+.emoji-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .emoji-btn {
   background: none;
   border: none;
@@ -341,9 +347,14 @@ a {
   transform: scale(1.2);
 }
 
-.emoji-btn.selected {
+.emoji-radio:checked + .emoji-btn {
   transform: scale(1.3);
   background: rgba(31, 191, 184, 0.2);
+}
+
+.emoji-radio:focus-visible + .emoji-btn {
+  outline: 2px solid var(--color-coral);
+  outline-offset: 2px;
 }
 
 /* ── Scrollable Panels ───────────────────────────────────────────────────── */
