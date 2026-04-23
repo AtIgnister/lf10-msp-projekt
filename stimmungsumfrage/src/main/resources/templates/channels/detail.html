@@ -19,7 +19,7 @@
 
     <div class="row g-4 mb-4">
         <div class="col-md-6">
-            <div class="card h-100">
+            <div class="card surface-panel h-100">
                 <div class="card-body">
                     <h5 class="mb-3">📊 Kanal Info</h5>
                     <div class="mb-3">
@@ -47,7 +47,7 @@
 
         <!-- Invite Section (invite-only channels) -->
         <div class="col-md-6" th:if="${channel.channelType.name() == 'INVITE_ONLY'}">
-            <div class="card h-100">
+            <div class="card surface-panel h-100">
                 <div class="card-body">
                     <h5 class="mb-3">✉️ Einladungen</h5>
                     <small class="text-secondary-dark d-block mb-2">Person einladen</small>
@@ -77,7 +77,7 @@
     </div>
 
     <!-- Feedback Section -->
-    <div class="card">
+    <div class="card surface-panel">
         <div class="card-body">
             <h5 class="mb-3">📝 Kanal-Feedback</h5>
             <form th:action="@{/channels/{id}/feedback(id=${channel.id})}" method="post" class="mb-4">
@@ -102,11 +102,9 @@
                 <div th:if="${#lists.isEmpty(feedbackList)}" class="text-secondary-dark">
                     Noch kein Feedback in diesem Kanal.
                 </div>
-                <div th:each="fb : ${feedbackList}" class="card mb-2">
+                <div th:each="fb : ${feedbackList}" class="card surface-panel mb-2">
                     <div class="card-body py-2 px-3">
                         <div class="d-flex justify-content-between mb-1">
-                            <small class="text-secondary-dark"
-                                   th:text="${'von ' + fb.user.firstname + ' ' + fb.user.lastname}">von Name</small>
                             <small class="text-secondary-dark"
                                    th:text="${#temporals.format(fb.createdAt, 'dd.MM.yyyy HH:mm')}">Datum</small>
                         </div>
