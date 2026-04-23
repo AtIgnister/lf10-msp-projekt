@@ -35,9 +35,6 @@ public class DashboardController {
                     map.put("count", m.getCount());
 
                     double percentage = total == 0 ? 0 : (double) m.getCount() / total;
-                    if (percentage == 0) {
-                        percentage = 0.01;
-                    }
                     map.put("percentage", percentage);
                     return map;
                 })
