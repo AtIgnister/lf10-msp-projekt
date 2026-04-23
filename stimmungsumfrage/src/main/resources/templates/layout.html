@@ -53,10 +53,12 @@
 <!-- Navigation Tabs -->
 <nav class="app-nav" th:if="${currentUserDisplay != null}">
     <div class="container d-flex gap-2 py-2">
+        <a class="nav-link" th:classappend="${currentPath.equals('/')} ? 'active'" th:href="@{/}">Abstimmen</a>
         <a class="nav-link" th:classappend="${currentPath.startsWith('/feedbacks')} ? 'active'" th:href="@{/feedbacks}">Feedbacks</a>
         <a class="nav-link" th:classappend="${currentPath.startsWith('/channels')} ? 'active'" th:href="@{/channels}">Kan&auml;le</a>
         <a class="nav-link" th:classappend="${currentPath.startsWith('/dashboard')} ? 'active'" th:href="@{/dashboard}" th:if="${isAdmin}">Dashboard</a>
         <a class="nav-link" th:classappend="${currentPath.startsWith('/admin/users')} ? 'active'" th:href="@{/admin/users}" th:if="${isAdmin}">Benutzer</a>
+
     </div>
 </nav>
 

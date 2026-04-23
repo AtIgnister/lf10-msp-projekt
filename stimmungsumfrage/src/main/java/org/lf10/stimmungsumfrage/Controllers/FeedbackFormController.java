@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.*;
 import org.lf10.stimmungsumfrage.Models.Forms.FeedbackForm;
 import org.lf10.stimmungsumfrage.Repositories.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,8 +23,6 @@ public class FeedbackFormController {
     private final MoodRepository moodRepository;
     private final FeedbackSubmissionRepository submissionRepository;
     private final DepartmentRepository departmentRepository;
-    private final ChannelRepository channelRepository;
-    private final ChannelFeedbackRepository channelFeedbackRepository;
 
     // Display feedback form
     @GetMapping
@@ -59,30 +58,20 @@ public class FeedbackFormController {
     }
 
     // Zeigt alle Feedbacks, deren Text nicht leer ist.
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("feedbacks")
     public String getFeedbacksWithText(
             @RequestParam(required = false) Long departmentId,
-            @RequestParam(required = false) Long channelId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            Authentication authentication,
             Model model
     ) {
-        User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
-
-        var myChannels = channelRepository.findByMember(user);
-        Long selectedChannelId = myChannels.stream()
-                .anyMatch(channel -> channel.getId().equals(channelId)) ? channelId : null;
-
         LocalDateTime startDate = date != null ? date.atStartOfDay() : null;
         LocalDateTime endDate = date != null ? date.plusDays(1).atStartOfDay() : null;
 
         model.addAttribute("feedbacks",
-                channelFeedbackRepository.findFilteredForFeedbackList(departmentId, selectedChannelId, startDate, endDate));
+                submissionRepository.findFilteredForFeedbackList(departmentId, startDate, endDate));
         model.addAttribute("departments", departmentRepository.findAll());
-        model.addAttribute("myChannels", myChannels);
         model.addAttribute("selectedDepartmentId", departmentId);
-        model.addAttribute("selectedChannelId", selectedChannelId);
         model.addAttribute("selectedDate", date);
         return "FeedbackList";
     }

@@ -34,8 +34,11 @@ public class GlobalModelAttributes {
                     user.getFirstname() + " " + user.getLastname());
             model.addAttribute("currentUserRole",
                     isAdmin ? "Vorgesetzter" : "Mitarbeiter");
+            String departmentName = user.getDepartment() != null
+                    ? user.getDepartment().getName()
+                    : "Keine Abteilung";
             model.addAttribute("currentUserDepartment",
-                    user.getDepartment().getName());
+                    departmentName);
         });
     }
 }
