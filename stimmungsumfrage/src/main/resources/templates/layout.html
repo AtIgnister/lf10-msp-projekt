@@ -33,26 +33,45 @@
 
 <!-- Header -->
 <header class="app-header sticky-top" th:if="${currentUserDisplay != null}">
-    <div class="container py-3 d-flex align-items-center justify-content-between">
-        <a class="navbar-brand text-white fw-bold fs-5 text-decoration-none"
-           th:href="@{/}">Team Stimmungsbarometer</a>
-        <div class="d-flex align-items-center gap-4">
-            <div class="text-end" th:if="${currentUserDisplay != null}">
-                <p class="mb-0 text-white fw-medium" th:text="${currentUserDisplay}">Benutzer</p>
-                <p class="mb-0 text-role" style="font-size: 0.75rem;"
-                   th:text="${currentUserRole + ' • ' + currentUserDepartment}">Rolle</p>
+    <div class="container py-3">
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+
+            <!-- Brand -->
+            <a class="navbar-brand text-white fw-bold fs-5 text-decoration-none"
+               th:href="@{/}">
+                Team Stimmungsbarometer
+            </a>
+
+            <!-- Right side -->
+            <div class="d-flex flex-column flex-sm-row align-items-sm-center gap-3 gap-md-4">
+
+                <!-- User info -->
+                <div class="text-sm-end text-start" th:if="${currentUserDisplay != null}">
+                    <p class="mb-0 text-white fw-medium" th:text="${currentUserDisplay}">
+                        Benutzer
+                    </p>
+                    <p class="mb-0 text-role" style="font-size: 0.75rem;"
+                       th:text="${currentUserRole + ' • ' + currentUserDepartment}">
+                        Rolle
+                    </p>
+                </div>
+
+                <!-- Logout -->
+                <form th:action="@{/logout}" method="post" class="mb-0">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                    <button type="submit" class="btn-logout w-100 w-sm-auto">
+                        Abmelden
+                    </button>
+                </form>
+
             </div>
-            <form th:action="@{/logout}" method="post" class="d-inline mb-0">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <button type="submit" class="btn-logout">Abmelden</button>
-            </form>
         </div>
     </div>
 </header>
 
 <!-- Navigation Tabs -->
 <nav class="app-nav" th:if="${currentUserDisplay != null}">
-    <div class="container d-flex gap-2 py-2">
+    <div class="container d-flex flex-wrap gap-2 py-2">
         <a class="nav-link" th:classappend="${currentPath.equals('/')} ? 'active'" th:href="@{/}">Abstimmen</a>
         <a class="nav-link" th:classappend="${currentPath.startsWith('/feedbacks')} ? 'active'" th:href="@{/feedbacks}">Feedbacks</a>
         <a class="nav-link" th:classappend="${currentPath.startsWith('/channels')} ? 'active'" th:href="@{/channels}">Kan&auml;le</a>

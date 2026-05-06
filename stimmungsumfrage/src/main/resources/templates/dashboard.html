@@ -11,21 +11,27 @@
 
     <h2 class="page-heading mb-4">Team-&Uuml;bersicht</h2>
 
-    <!-- Trend Chart -->
-    <div class="card surface-panel mb-4">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="d-flex align-items-center gap-2 mb-0">
-                    <span>📈</span> Stimmungsverlauf
-                </h5>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-secondary chart-filter" data-days="7">7 Tage</button>
-                    <button class="btn btn-sm btn-primary chart-filter active" data-days="30">30 Tage</button>
-                    <button class="btn btn-sm btn-secondary chart-filter" data-days="90">90 Tage</button>
-                </div>
+    <div>
+        <!-- Header (title + buttons only) -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+
+            <h5 class="d-flex align-items-center gap-2 mb-0">
+                <span>📈</span> Stimmungsverlauf
+            </h5>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-sm btn-secondary chart-filter" data-days="7">7 Tage</button>
+                <button class="btn btn-sm btn-primary chart-filter active" data-days="30">30 Tage</button>
+                <button class="btn btn-sm btn-secondary chart-filter" data-days="90">90 Tage</button>
             </div>
-            <canvas id="trend-chart" height="80"></canvas>
+
         </div>
+
+        <!-- Chart (full width row) -->
+        <div class="position-relative" style="height: 300px;">
+            <canvas id="trend-chart"></canvas>
+        </div>
+
     </div>
 
     <div class="row g-4 mb-4">
@@ -165,6 +171,7 @@
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
                 interaction: { mode: 'index', intersect: false },
                 plugins: { legend: { position: 'top' } },
                 scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
