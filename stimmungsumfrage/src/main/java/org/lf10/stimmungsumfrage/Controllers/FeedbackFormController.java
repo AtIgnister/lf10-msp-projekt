@@ -91,6 +91,11 @@ public class FeedbackFormController {
 
         return sortFeedbackList("mood", direction, model);
     }
+    @GetMapping("feedbacks/feedback/{direction}")
+    public String getAllSortedByFeedback(Model model, @PathVariable String direction) {
+
+        return sortFeedbackList("feedbackText", direction, model);
+    }
     @GetMapping("feedbacks/created_at/{direction}")
     public String getAllSortedByErstellung(Model model, @PathVariable String direction) {
 
