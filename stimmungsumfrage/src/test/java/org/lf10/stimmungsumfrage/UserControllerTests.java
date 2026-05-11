@@ -1,9 +1,6 @@
 package org.lf10.stimmungsumfrage;
 
 import org.junit.jupiter.api.Test;
-import org.lf10.stimmungsumfrage.Config.DataInitializer;
-import org.lf10.stimmungsumfrage.Config.SecurityConfig;
-import org.lf10.stimmungsumfrage.Controllers.UserController;
 import org.lf10.stimmungsumfrage.Helpers.MockData;
 import org.lf10.stimmungsumfrage.Models.Department;
 import org.lf10.stimmungsumfrage.Models.Role;
@@ -18,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 

@@ -3,7 +3,6 @@ package org.lf10.stimmungsumfrage.Controllers;
 import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.Forms.FeedbackForm;
 
-import java.io.Console;
 
 import org.lf10.stimmungsumfrage.Models.User;
 import org.lf10.stimmungsumfrage.Repositories.DepartmentRepository;

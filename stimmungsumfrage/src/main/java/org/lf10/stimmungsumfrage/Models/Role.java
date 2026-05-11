@@ -3,7 +3,6 @@ package org.lf10.stimmungsumfrage.Models;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 
 @Data
 @NoArgsConstructor
