@@ -22,12 +22,8 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        if(user.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-        } else {
-            User existingUser = userRepository.getReferenceById(user.getId());
-            user.setPassword(existingUser.getPassword());
-        }
+        User existingUser = userRepository.findById(user.getId())
+                .orElseThrow();
 
         return userRepository.save(user);
     }
