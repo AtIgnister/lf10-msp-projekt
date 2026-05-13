@@ -39,14 +39,79 @@ class ChannelServiceTest {
 
         when(channelRepository.save(any(Channel.class))).thenAnswer(inv -> inv.getArgument(0));
 
-        Channel channel = channelService.createChannel("IT Team", "Daily sync", ChannelType.OPEN, creator);
+        Channel channel = channelService.createChannel(
+                "IT Team",
+                "Daily sync",
+                ChannelType.OPEN,
+                creator,
+                5,
+                "🤯",
+                "😬",
+                "😐",
+                "🙂",
+                "🤩"
+        );
 
         assertEquals("IT Team", channel.getName());
         assertEquals("Daily sync", channel.getDescription());
         assertEquals(ChannelType.OPEN, channel.getChannelType());
+        assertEquals(5, channel.getEffectiveFeedbackScaleSize());
         assertSame(creator, channel.getCreator());
         assertTrue(channel.getMembers().contains(creator));
+        assertEquals(List.of("🤯", "😬", "😐", "🙂", "🤩"), channel.getFeedbackEmojis());
         verify(channelRepository, times(1)).save(channel);
+    }
+
+    @Test
+    void createChannel_AllowsTwoEmojiScaleWithOnlyBadAndGoodEmojis() {
+        User creator = new User();
+        creator.setId(2L);
+
+        when(channelRepository.save(any(Channel.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Channel channel = channelService.createChannel(
+                "Support",
+                "Short feedback",
+                ChannelType.OPEN,
+                creator,
+                2,
+                null,
+                "☹️",
+                null,
+                "🙂",
+                null
+        );
+
+        assertEquals(2, channel.getEffectiveFeedbackScaleSize());
+        assertEquals(List.of("☹️", "🙂"), channel.getFeedbackEmojis());
+        assertNull(channel.getEmojiVeryBad());
+        assertEquals("☹️", channel.getEmojiBad());
+        assertNull(channel.getEmojiNeutral());
+        assertEquals("🙂", channel.getEmojiGood());
+        assertNull(channel.getEmojiVeryGood());
+    }
+
+    @Test
+    void createChannel_RejectsInvalidEmojiScale() {
+        User creator = new User();
+        creator.setId(3L);
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+                () -> channelService.createChannel(
+                        "Invalid",
+                        null,
+                        ChannelType.OPEN,
+                        creator,
+                        1,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                ));
+
+        assertEquals("Feedback scale must be between 2 and 5 emojis", ex.getMessage());
+        verify(channelRepository, never()).save(any(Channel.class));
     }
 
     @Test

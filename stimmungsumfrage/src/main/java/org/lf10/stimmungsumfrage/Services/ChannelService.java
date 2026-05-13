@@ -17,12 +17,22 @@ public class ChannelService {
     private final ChannelInviteRepository inviteRepository;
 
     @Transactional
-    public Channel createChannel(String name, String description, ChannelType type, User creator) {
+    public Channel createChannel(String name, String description, ChannelType type, User creator,
+                                 int feedbackScaleSize,
+                                 String emojiVeryBad, String emojiBad, String emojiNeutral,
+                                 String emojiGood, String emojiVeryGood) {
+        if (feedbackScaleSize < Channel.MIN_FEEDBACK_EMOJI_COUNT || feedbackScaleSize > Channel.MAX_FEEDBACK_EMOJI_COUNT) {
+            throw new IllegalArgumentException("Feedback scale must be between 2 and 5 emojis");
+        }
+
         Channel channel = new Channel();
         channel.setName(name);
         channel.setDescription(description);
         channel.setChannelType(type);
         channel.setCreator(creator);
+        channel.setFeedbackScaleSize(feedbackScaleSize);
+
+        applyFeedbackEmojis(channel, feedbackScaleSize, emojiVeryBad, emojiBad, emojiNeutral, emojiGood, emojiVeryGood);
         channel.getMembers().add(creator);
         return channelRepository.save(channel);
     }
@@ -99,5 +109,42 @@ public class ChannelService {
     public void declineInvite(ChannelInvite invite) {
         invite.setStatus(InviteStatus.DECLINED);
         inviteRepository.save(invite);
+    }
+
+    private void applyFeedbackEmojis(Channel channel, int feedbackScaleSize,
+                                     String emojiVeryBad, String emojiBad, String emojiNeutral,
+                                     String emojiGood, String emojiVeryGood) {
+        switch (feedbackScaleSize) {
+            case 2 -> {
+                channel.setEmojiBad(normalizeEmoji(emojiBad, Channel.DEFAULT_EMOJI_BAD));
+                channel.setEmojiGood(normalizeEmoji(emojiGood, Channel.DEFAULT_EMOJI_GOOD));
+            }
+            case 3 -> {
+                channel.setEmojiBad(normalizeEmoji(emojiBad, Channel.DEFAULT_EMOJI_BAD));
+                channel.setEmojiNeutral(normalizeEmoji(emojiNeutral, Channel.DEFAULT_EMOJI_NEUTRAL));
+                channel.setEmojiGood(normalizeEmoji(emojiGood, Channel.DEFAULT_EMOJI_GOOD));
+            }
+            case 4 -> {
+                channel.setEmojiVeryBad(normalizeEmoji(emojiVeryBad, Channel.DEFAULT_EMOJI_VERY_BAD));
+                channel.setEmojiBad(normalizeEmoji(emojiBad, Channel.DEFAULT_EMOJI_BAD));
+                channel.setEmojiGood(normalizeEmoji(emojiGood, Channel.DEFAULT_EMOJI_GOOD));
+                channel.setEmojiVeryGood(normalizeEmoji(emojiVeryGood, Channel.DEFAULT_EMOJI_VERY_GOOD));
+            }
+            default -> {
+                channel.setEmojiVeryBad(normalizeEmoji(emojiVeryBad, Channel.DEFAULT_EMOJI_VERY_BAD));
+                channel.setEmojiBad(normalizeEmoji(emojiBad, Channel.DEFAULT_EMOJI_BAD));
+                channel.setEmojiNeutral(normalizeEmoji(emojiNeutral, Channel.DEFAULT_EMOJI_NEUTRAL));
+                channel.setEmojiGood(normalizeEmoji(emojiGood, Channel.DEFAULT_EMOJI_GOOD));
+                channel.setEmojiVeryGood(normalizeEmoji(emojiVeryGood, Channel.DEFAULT_EMOJI_VERY_GOOD));
+            }
+        }
+    }
+
+    private String normalizeEmoji(String emoji, String defaultEmoji) {
+        String result = (emoji == null || emoji.isBlank()) ? defaultEmoji : emoji;
+        if (result != null && result.length() > 32) {
+            return result.substring(0, 32);
+        }
+        return result;
     }
 }

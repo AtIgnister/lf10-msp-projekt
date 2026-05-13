@@ -47,10 +47,17 @@ public class ChannelController {
     public String create(@RequestParam String name,
                          @RequestParam(required = false) String description,
                          @RequestParam String channelType,
+                         @RequestParam(defaultValue = "5") int feedbackScaleSize,
+                         @RequestParam(required = false) String emojiVeryBad,
+                         @RequestParam(required = false) String emojiBad,
+                         @RequestParam(required = false) String emojiNeutral,
+                         @RequestParam(required = false) String emojiGood,
+                         @RequestParam(required = false) String emojiVeryGood,
                          Authentication auth) {
         User user = getAuthenticatedUser(auth);
         ChannelType type = channelType.equals("invite-only") ? ChannelType.INVITE_ONLY : ChannelType.OPEN;
-        channelService.createChannel(name, description, type, user);
+        channelService.createChannel(name, description, type, user, feedbackScaleSize,
+                emojiVeryBad, emojiBad, emojiNeutral, emojiGood, emojiVeryGood);
         return "redirect:/channels";
     }
 
