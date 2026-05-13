@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -78,14 +80,23 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")  // Use POST for final delete (safer)
-    public String deleteUser(@PathVariable Long id) {
+    public ModelAndView deleteUser(@PathVariable Long id) {
         User user = userRepository.findById(id).get();
         String currentUsersEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+        ModelAndView mav = new ModelAndView();
         if (!currentUsersEmail.equals(user.getEmail()))
         {
             userRepository.delete(user);
+            mav.setStatus(HttpStatusCode.valueOf(200));
         }
-        return "redirect:/admin/users";
+        else
+        {
+            mav.setStatus(HttpStatusCode.valueOf(403));
+            mav.addObject("message", "Benutzer können sich nicht selber löschen.");
+            mav.setViewName("error");
+            
+        }
+        return mav;
     }
 
     @GetMapping("/{id}/edit")
