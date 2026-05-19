@@ -69,19 +69,20 @@
                         <div th:each="mood : ${moodCounts}">
                             <div class="d-flex justify-content-between" style="font-size: 0.875rem;">
                                 <span>
-                                    <span th:switch="${mood.moodName}">
+                                    <span th:if="${mood['emoji'] != null}" th:text="${mood['emoji']}">😊</span>
+                                    <span th:if="${mood['emoji'] == null}" th:switch="${mood['moodName']}">
                                         <span th:case="'HAPPY'">😊</span>
                                         <span th:case="'NEUTRAL'">😐</span>
                                         <span th:case="'SAD'">😢</span>
                                     </span>
-                                    <span th:text="${mood.moodName}">Mood</span>
+                                    <span th:text="${mood['moodName']}">Mood</span>
                                 </span>
-                                <span class="fw-semibold" th:text="${mood.count} + ' Stimmen'">0</span>
+                                <span class="fw-semibold" th:text="${mood['count']} + ' Stimmen'">0</span>
                             </div>
                             <div class="stat-bar-track">
                                 <div class="stat-bar-fill"
-                                     th:classappend="${mood.moodName == 'HAPPY' ? 'good' : (mood.moodName == 'NEUTRAL' ? 'neutral' : 'bad')}"
-                                     th:style="'width: ' + ${mood.percentage * 100} + '%'">
+                                     th:classappend="${mood['colorClass'] != null ? mood['colorClass'] : (mood['moodName'] == 'HAPPY' ? 'good' : (mood['moodName'] == 'NEUTRAL' ? 'neutral' : 'bad'))}"
+                                     th:style="'width: ' + ${mood['percentage'] * 100} + '%'">
                                 </div>
                             </div>
                         </div>
@@ -103,15 +104,16 @@
                     </h5>
                     <div class="d-flex flex-column gap-3">
                         <div th:each="mood : ${moodCounts}" class="d-flex align-items-center gap-3">
-                            <span th:switch="${mood.moodName}" style="font-size: 2rem;">
+                            <span th:if="${mood['emoji'] != null}" th:text="${mood['emoji']}" style="font-size: 2rem;">😊</span>
+                            <span th:if="${mood['emoji'] == null}" th:switch="${mood['moodName']}" style="font-size: 2rem;">
                                 <span th:case="'HAPPY'">😊</span>
                                 <span th:case="'NEUTRAL'">😐</span>
                                 <span th:case="'SAD'">😢</span>
                             </span>
                             <div>
-                                <p class="mb-0 fw-semibold" th:text="${mood.moodName}">Mood</p>
+                                <p class="mb-0 fw-semibold" th:text="${mood['moodName']}">Mood</p>
                                 <p class="mb-0 text-secondary-dark" style="font-size: 0.875rem;"
-                                   th:text="${#numbers.formatDecimal(mood.percentage * 100, 1, 0)} + '%'">0%</p>
+                                   th:text="${#numbers.formatDecimal(mood['percentage'] * 100, 1, 0)} + '%'">0%</p>
                             </div>
                         </div>
                     </div>
@@ -174,42 +176,41 @@
     </div>
 
     <script th:inline="javascript">
-        const allLabels  = /*[[${chartLabels}]]*/  [];
-        const allHappy   = /*[[${chartHappy}]]*/   [];
-        const allNeutral = /*[[${chartNeutral}]]*/ [];
-        const allSad     = /*[[${chartSad}]]*/     [];
+        const allLabels   = /*[[${chartLabels}]]*/   [];
+        const allHappy    = /*[[${chartHappy}]]*/    [];
+        const allNeutral  = /*[[${chartNeutral}]]*/  [];
+        const allSad      = /*[[${chartSad}]]*/      [];
+        const chartSeries = /*[[${chartSeries}]]*/   null;
 
         let activeDays = 30;
 
         function slice(arr, days) { return arr.slice(-days); }
 
+        const seriesDefs = (chartSeries && chartSeries.length > 0)
+            ? chartSeries.map(s => ({
+                label: s.label + ' ' + s.emoji,
+                data: s.data,
+                borderColor: s.color,
+                backgroundColor: s.background,
+                tension: 0.4, fill: true, pointRadius: 2
+            }))
+            : [
+                { label: 'Positiv 😊', data: allHappy,
+                  borderColor: '#34d399', backgroundColor: 'rgba(52,211,153,0.1)',
+                  tension: 0.4, fill: true, pointRadius: 2 },
+                { label: 'Neutral 😐', data: allNeutral,
+                  borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.1)',
+                  tension: 0.4, fill: true, pointRadius: 2 },
+                { label: 'Negativ 😢', data: allSad,
+                  borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,0.1)',
+                  tension: 0.4, fill: true, pointRadius: 2 }
+            ];
+
         const chart = new Chart(document.getElementById('trend-chart'), {
             type: 'line',
             data: {
                 labels: slice(allLabels, activeDays),
-                datasets: [
-                    {
-                        label: 'Positiv 😊',
-                        data: slice(allHappy, activeDays),
-                        borderColor: '#34d399',
-                        backgroundColor: 'rgba(52,211,153,0.1)',
-                        tension: 0.4, fill: true, pointRadius: 2
-                    },
-                    {
-                        label: 'Neutral 😐',
-                        data: slice(allNeutral, activeDays),
-                        borderColor: '#fbbf24',
-                        backgroundColor: 'rgba(251,191,36,0.1)',
-                        tension: 0.4, fill: true, pointRadius: 2
-                    },
-                    {
-                        label: 'Negativ 😢',
-                        data: slice(allSad, activeDays),
-                        borderColor: '#f87171',
-                        backgroundColor: 'rgba(248,113,113,0.1)',
-                        tension: 0.4, fill: true, pointRadius: 2
-                    }
-                ]
+                datasets: seriesDefs.map(s => ({ ...s, data: slice(s.data, activeDays) }))
             },
             options: {
                 responsive: true,
@@ -225,9 +226,9 @@
                 const days = parseInt(btn.dataset.days);
                 activeDays = days;
                 chart.data.labels = slice(allLabels, days);
-                chart.data.datasets[0].data = slice(allHappy, days);
-                chart.data.datasets[1].data = slice(allNeutral, days);
-                chart.data.datasets[2].data = slice(allSad, days);
+                seriesDefs.forEach((s, i) => {
+                    chart.data.datasets[i].data = slice(s.data, days);
+                });
                 chart.update();
                 document.querySelectorAll('.chart-filter').forEach(b => {
                     b.className = (b === btn)
