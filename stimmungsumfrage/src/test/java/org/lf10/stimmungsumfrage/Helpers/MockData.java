@@ -26,7 +26,7 @@ public class MockData {
 
     public static User createMockAdmin() {
         Role admin_role = new Role();
-        admin_role.setName("ROLE_ADMIN");
+        admin_role.setName("ADMIN");
         return createMockUser().setRole(admin_role);
     }
 }
