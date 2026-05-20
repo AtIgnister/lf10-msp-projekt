@@ -53,7 +53,7 @@ public class User implements UserDetails {
     @NonNull
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Assuming Role has a 'name' like "USER" or "ADMIN"
-        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+        return Collections.singletonList(new SimpleGrantedAuthority(role.getName()));
     }
 
     @Override

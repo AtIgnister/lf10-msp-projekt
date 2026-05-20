@@ -59,11 +59,11 @@ public class DataInitializer {
                         return departmentRepository.save(dep);
                     });
 
-            Role roleUser = roleRepository.findByName("ROLE_USER")
-                    .orElseGet(() -> roleRepository.save(new Role("ROLE_USER")));
+            Role roleUser = roleRepository.findByName("USER")
+                    .orElseGet(() -> roleRepository.save(new Role("USER")));
 
-            Role roleAdmin = roleRepository.findByName("ROLE_ADMIN")
-                    .orElseGet(() -> roleRepository.save(new Role("ROLE_ADMIN")));
+            Role roleAdmin = roleRepository.findByName("ADMIN")
+                    .orElseGet(() -> roleRepository.save(new Role("ADMIN")));
 
             if (userRepository.findByEmail("admin@test.com").isEmpty()) {
                 User user = new User();
