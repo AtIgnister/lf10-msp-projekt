@@ -59,7 +59,7 @@ public class FeedbackFormController {
     }
 
     // Zeigt alle Feedbacks, deren Text nicht leer ist.
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("feedbacks")
     public String getFeedbacksWithText(
             @RequestParam(required = false) Long departmentId,

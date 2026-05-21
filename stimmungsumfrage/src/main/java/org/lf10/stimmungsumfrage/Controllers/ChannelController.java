@@ -34,7 +34,7 @@ public class ChannelController {
         model.addAttribute("myChannels", channelService.getUserChannels(user));
         model.addAttribute("availableChannels", channelService.getAvailableChannels(user));
         model.addAttribute("pendingInvites", channelService.getPendingInvites(user));
-        model.addAttribute("isAdmin", user.getRole().getName().equals("ROLE_ADMIN"));
+        model.addAttribute("isAdmin", user.getRole().getName().equals("ADMIN"));
         return "channels/index";
     }
 

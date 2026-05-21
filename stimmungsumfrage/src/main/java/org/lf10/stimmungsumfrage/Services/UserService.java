@@ -3,6 +3,10 @@ package org.lf10.stimmungsumfrage.Services;
 import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.User;
 import org.lf10.stimmungsumfrage.Repositories.UserRepository;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +25,33 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUser(User user) {
-        User existingUser = userRepository.findById(user.getId())
+    public User updateUser(User updatedUser) {
+
+        User existingUser = userRepository.findById(updatedUser.getId())
                 .orElseThrow();
 
-        return userRepository.save(user);
+        boolean emailChanged =
+                !existingUser.getEmail().equals(updatedUser.getEmail());
+
+        // Update editable fields only
+        existingUser.setFirstname(updatedUser.getFirstname());
+        existingUser.setLastname(updatedUser.getLastname());
+        existingUser.setDepartment(updatedUser.getDepartment());
+        existingUser.setRole(updatedUser.getRole());
+
+        existingUser.setEmail(updatedUser.getEmail());
+
+        // Only encode password if changed
+        if (updatedUser.getPassword() != null &&
+                !updatedUser.getPassword().isBlank()) {
+
+            existingUser.setPassword(
+                    passwordEncoder.encode(updatedUser.getPassword())
+            );
+        }
+
+        userRepository.save(existingUser);
+
+        return existingUser;
     }
 }
