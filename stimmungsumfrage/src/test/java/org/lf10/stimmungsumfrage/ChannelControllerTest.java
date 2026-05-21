@@ -10,7 +10,6 @@ import org.lf10.stimmungsumfrage.Repositories.ChannelRepository;
 import org.lf10.stimmungsumfrage.Repositories.UserRepository;
 import org.lf10.stimmungsumfrage.Services.ChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -30,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(controllers = ChannelController.class)
-@AutoConfigureMockMvc(addFilters = true)
 @Import(SecurityConfig.class)
 class ChannelControllerTest {
 
@@ -90,6 +88,39 @@ class ChannelControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("channels/detail"));
+    }
+
+    @Test
+    void create_ForwardsCustomEmojiSetToService() throws Exception {
+        User user = MockData.createMockUser();
+        user.setId(1L);
+
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+
+        mockMvc.perform(post("/channels")
+                        .with(user(user.getEmail()))
+                        .with(csrf())
+                        .param("name", "IT Team")
+                        .param("description", "Daily sync")
+                        .param("channelType", "open")
+                        .param("feedbackScaleSize", "2")
+                        .param("emojiBad", "😬")
+                        .param("emojiGood", "🙂"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/channels"));
+
+        verify(channelService, times(1)).createChannel(
+                eq("IT Team"),
+                eq("Daily sync"),
+                eq(ChannelType.OPEN),
+                eq(user),
+                eq(2),
+                isNull(),
+                eq("😬"),
+                isNull(),
+                eq("🙂"),
+                isNull()
+        );
     }
 
     @Test
