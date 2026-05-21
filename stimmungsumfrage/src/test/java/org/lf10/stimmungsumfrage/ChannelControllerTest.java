@@ -98,7 +98,7 @@ class ChannelControllerTest {
         when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
 
         mockMvc.perform(post("/channels")
-                        .with(user(user.getEmail()))
+                        .with(user(user))
                         .with(csrf())
                         .param("name", "IT Team")
                         .param("description", "Daily sync")
