@@ -209,6 +209,10 @@ a {
   transition: all 0.2s ease;
 }
 
+#channelSelect {
+  padding-right: 2rem;
+}
+
 .form-control::placeholder {
   color: #94a3b8;
 }
