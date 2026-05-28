@@ -55,7 +55,11 @@ public class UserController {
             model.addAttribute("roles", roleRepository.findAll());
             return new ModelAndView("users/create", HttpStatus.BAD_REQUEST);
         }
-        userService.registerUser(user);
+        try {
+            userService.registerUser(user);
+        } catch(Exception e) {
+            return new ModelAndView("users/create", HttpStatus.BAD_REQUEST);
+        }
         return new ModelAndView("redirect:/admin/users");
     }
 
