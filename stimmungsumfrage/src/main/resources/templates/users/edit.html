@@ -60,6 +60,14 @@
                                         th:selected="${user.role.id == roleItem.id}"></option>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Aktiv</label>
+                            <select class="form-select" th:field="*{enabled}">
+                                <option th:value="true">Ja</option>
+                                <option th:value="false">Nein</option>
+                            </select>
+                            
+                        </div>
 
                         <div class="d-flex gap-3 mt-4">
                             <button type="submit" class="btn btn-primary flex-grow-1">Aktualisieren</button>
