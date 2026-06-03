@@ -38,7 +38,7 @@
                                class="btn btn-sm btn-primary" title="Bearbeiten">
                                 Bearbeiten
                             </a>
-                            <a th:href="@{/admin/users/{id}/confirm-delete(id=${user.id})}"
+                            <a th:if="${!user.getEnabled()}" th:href="@{/admin/users/{id}/confirm-delete(id=${user.id})}"
                                class="btn btn-sm btn-danger"
                                title="Löschen">
                                 Löschen

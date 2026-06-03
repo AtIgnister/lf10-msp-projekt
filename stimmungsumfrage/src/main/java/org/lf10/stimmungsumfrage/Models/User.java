@@ -47,6 +47,10 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private LocalDateTime lastSubmission = LocalDateTime.of(1970, 1, 1, 0, 0);
 
+    @Column(nullable = false)
+    private Boolean enabled = true;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
@@ -85,10 +89,9 @@ public class User implements UserDetails {
     public boolean isCredentialsNonExpired() {
         return true; // implement your logic if needed
     }
-
     @Override
     public boolean isEnabled() {
-        return true; // implement your logic if needed
+        return enabled; // implement your logic if needed
     }
 
     public boolean canSubmitFeedback() {
