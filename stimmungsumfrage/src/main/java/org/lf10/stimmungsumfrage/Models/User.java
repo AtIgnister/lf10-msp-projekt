@@ -40,10 +40,7 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String password;
-
-    @Column(nullable = false)
-    private Boolean hasSubmittedFeedback = false;
-
+    
     @Column(nullable = false)
     private LocalDateTime lastSubmission = LocalDateTime.of(1970, 1, 1, 0, 0);
 
