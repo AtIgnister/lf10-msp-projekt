@@ -82,22 +82,22 @@ public class UserController {
 
     @DeleteMapping("/{id}")  // Use POST for final delete (safer)
     public ModelAndView deleteUser(@PathVariable Long id) {
-        User user = userRepository.findById(id).get();
-        String currentUsersEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        ModelAndView mav = new ModelAndView();
-        if (!currentUsersEmail.equals(user.getEmail()))
-        {
-            userRepository.delete(user);
-            mav.setStatus(HttpStatusCode.valueOf(200));
-        }
-        else
-        {
-            mav.setStatus(HttpStatusCode.valueOf(403));
-            mav.addObject("message", "Benutzer können sich nicht selber löschen.");
-            mav.setViewName("error");
-            
-        }
-        return mav;
+       User user = userRepository.findById(id).orElseThrow();
+       ModelAndView mav = new ModelAndView();
+
+    String currentUsersEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+    if (currentUsersEmail.equals(user.getEmail())) {
+        mav.setStatus(HttpStatusCode.valueOf(403));
+        mav.addObject("message", "Benutzer können sich nicht selber löschen.");
+        mav.setViewName( "error");
+    }
+    else
+    {
+    userRepository.delete(user);
+    mav.setViewName("redirect:/admin/users?deleted=true");
+    }
+      return mav;
     }
 
     @GetMapping("/{id}/edit")
