@@ -184,7 +184,7 @@ public class UserControllerTests {
                                 .with(user(mockAdmin))
                                 .with(csrf())
                 ).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/users"));
+                .andExpect(redirectedUrl("/admin/users?deleted=true"));
     }
 
     @Test
