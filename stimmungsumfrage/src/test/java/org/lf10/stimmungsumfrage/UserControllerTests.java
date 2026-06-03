@@ -101,7 +101,6 @@ public class UserControllerTests {
                 .setPassword("oldpass")
                 .setDepartment(validDept)
                 .setRole(validRole)
-                .setHasSubmittedFeedback(false);
 
         when(userService.registerUser(any(User.class))).thenReturn(newUser);
 
