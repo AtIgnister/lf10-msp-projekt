@@ -86,6 +86,11 @@ public class ChannelController {
             model.addAttribute("invitableUsers", invitableUsers);
         }
 
+        boolean canSubmitFeedback =
+                channelService.canSubmitFeedback(user, channel);
+
+        model.addAttribute("canSubmitFeedback", canSubmitFeedback);
+
         return "channels/detail";
     }
 
@@ -121,8 +126,13 @@ public class ChannelController {
             return "redirect:/channels";
         }
 
+        if(!channelService.canSubmitFeedback(user, channel)) {
+            return "redirect:/channels/" + id;
+        }
+
         if ((emoji != null && !emoji.isBlank()) || (comment != null && !comment.isBlank())) {
             channelService.sendFeedback(channel, user, emoji, comment);
+            channelService.updateLastSubmitted(user, channel);
         }
         return "redirect:/channels/" + id;
     }

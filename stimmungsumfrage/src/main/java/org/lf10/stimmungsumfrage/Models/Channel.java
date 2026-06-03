@@ -10,9 +10,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "channels")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Channel {
 
     public static final int MIN_FEEDBACK_EMOJI_COUNT = 2;
@@ -26,6 +28,7 @@ public class Channel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false)
@@ -74,6 +77,9 @@ public class Channel {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserChannelFeedbackStatus> userFeedbackStatuses = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {

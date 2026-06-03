@@ -27,7 +27,14 @@ public class FeedbackFormController {
 
     // Display feedback form
     @GetMapping
-    public String getForm(Model model) {
+    public String getForm(Model model, Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
+
+        if(user.canSubmitFeedback()) {
+            return "FeedbackCooldownPage";
+        }
+
         model.addAttribute("feedbackForm", new FeedbackForm()); // bind empty form
         model.addAttribute("data", "Welcome");
         return "FeedbackForm";
@@ -43,6 +50,10 @@ public class FeedbackFormController {
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
 
+        if(user.canSubmitFeedback()) {
+            return "FeedbackCooldownPage";
+        }
+
         Mood moodEntity = moodRepository.findByMoodName(feedbackForm.getMood().toUpperCase())
                 .orElseThrow(() -> new RuntimeException("Mood not found"));
 
@@ -52,6 +63,8 @@ public class FeedbackFormController {
         submission.setDepartment(user.getDepartment());
 
         submissionRepository.save(submission);
+        user.setLastSubmission(LocalDateTime.now());
+        userRepository.save(user);
 
         model.addAttribute("feedback", feedbackForm.getFeedback());
         model.addAttribute("mood", moodEntity.getMoodName());
