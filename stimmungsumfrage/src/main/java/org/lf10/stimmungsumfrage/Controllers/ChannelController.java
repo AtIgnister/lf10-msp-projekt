@@ -127,7 +127,7 @@ public class ChannelController {
         }
 
         if(!channelService.canSubmitFeedback(user, channel)) {
-            return "redirect:/channels";
+            return "redirect:/channels/" + id;
         }
 
         if ((emoji != null && !emoji.isBlank()) || (comment != null && !comment.isBlank())) {

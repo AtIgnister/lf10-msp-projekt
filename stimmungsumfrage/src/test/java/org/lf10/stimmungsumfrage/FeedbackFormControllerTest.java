@@ -55,10 +55,18 @@ public class FeedbackFormControllerTest {
     void testFormRendering() throws Exception {
         User mockUser = MockData.createMockUser();
 
+        when(userRepository.findByEmail(mockUser.getEmail()))
+                .thenReturn(Optional.of(mockUser));
+
         mockMvc.perform(
-                    get("/")
-                            .with(user(mockUser))
-                            .with(csrf()))
+                        get("/")
+                                .principal(
+                                        new UsernamePasswordAuthenticationToken(
+                                                mockUser.getEmail(),
+                                                "n/a"
+                                        ))
+                                .with(csrf())
+                )
                 .andExpect(status().isOk())
                 .andExpect(view().name("FeedbackForm"));
 
