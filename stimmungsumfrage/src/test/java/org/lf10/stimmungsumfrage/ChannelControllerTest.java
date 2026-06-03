@@ -10,7 +10,6 @@ import org.lf10.stimmungsumfrage.Repositories.ChannelRepository;
 import org.lf10.stimmungsumfrage.Repositories.UserRepository;
 import org.lf10.stimmungsumfrage.Services.ChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -30,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(controllers = ChannelController.class)
-@AutoConfigureMockMvc(addFilters = true)
 @Import(SecurityConfig.class)
 class ChannelControllerTest {
 
@@ -63,7 +61,7 @@ class ChannelControllerTest {
         when(channelRepository.findById(10L)).thenReturn(Optional.of(channel));
 
         mockMvc.perform(get("/channels/10")
-                        .with(user(user.getEmail()))
+                        .with(user(user))
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/channels"));
@@ -86,10 +84,43 @@ class ChannelControllerTest {
         when(channelService.getFeedback(channel)).thenReturn(List.of());
 
         mockMvc.perform(get("/channels/11")
-                        .with(user(user.getEmail()))
+                        .with(user(user))
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(view().name("channels/detail"));
+    }
+
+    @Test
+    void create_ForwardsCustomEmojiSetToService() throws Exception {
+        User user = MockData.createMockUser();
+        user.setId(1L);
+
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.of(user));
+
+        mockMvc.perform(post("/channels")
+                        .with(user(user))
+                        .with(csrf())
+                        .param("name", "IT Team")
+                        .param("description", "Daily sync")
+                        .param("channelType", "open")
+                        .param("feedbackScaleSize", "2")
+                        .param("emojiBad", "😬")
+                        .param("emojiGood", "🙂"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/channels"));
+
+        verify(channelService, times(1)).createChannel(
+                eq("IT Team"),
+                eq("Daily sync"),
+                eq(ChannelType.OPEN),
+                eq(user),
+                eq(2),
+                isNull(),
+                eq("😬"),
+                isNull(),
+                eq("🙂"),
+                isNull()
+        );
     }
 
     @Test
@@ -106,7 +137,7 @@ class ChannelControllerTest {
         when(channelRepository.findById(12L)).thenReturn(Optional.of(channel));
 
         mockMvc.perform(post("/channels/12/feedback")
-                        .with(user(user.getEmail()))
+                        .with(user(user))
                         .with(csrf())
                         .param("emoji", "")
                         .param("comment", "   "))
@@ -133,7 +164,7 @@ class ChannelControllerTest {
         when(channelInviteRepository.findById(5L)).thenReturn(Optional.of(invite));
 
         mockMvc.perform(post("/channels/invites/5/accept")
-                        .with(user(loggedInUser.getEmail()))
+                        .with(user(loggedInUser))
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/channels"));
@@ -158,7 +189,7 @@ class ChannelControllerTest {
         when(channelInviteRepository.findById(6L)).thenReturn(Optional.of(invite));
 
         mockMvc.perform(post("/channels/invites/6/decline")
-                        .with(user(loggedInUser.getEmail()))
+                        .with(user(loggedInUser))
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/channels"));
@@ -180,7 +211,7 @@ class ChannelControllerTest {
         when(channelInviteRepository.findById(7L)).thenReturn(Optional.of(invite));
 
         mockMvc.perform(post("/channels/invites/7/accept")
-                        .with(user(invitedUser.getEmail()))
+                        .with(user(invitedUser))
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/channels"));
@@ -202,7 +233,7 @@ class ChannelControllerTest {
         when(channelInviteRepository.findById(8L)).thenReturn(Optional.of(invite));
 
         mockMvc.perform(post("/channels/invites/8/decline")
-                        .with(user(invitedUser.getEmail()))
+                        .with(user(invitedUser))
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/channels"));

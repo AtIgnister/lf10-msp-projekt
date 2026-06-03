@@ -2,6 +2,7 @@ package org.lf10.stimmungsumfrage.Config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.lf10.stimmungsumfrage.Models.User;
 import org.lf10.stimmungsumfrage.Repositories.UserRepository;
 import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
@@ -21,24 +22,33 @@ public class GlobalModelAttributes {
 
     @ModelAttribute
     public void addGlobalAttributes(Authentication authentication, Model model) {
-        if (authentication == null || !authentication.isAuthenticated()) {
+        if (authentication == null ||
+                !authentication.isAuthenticated() ||
+                authentication.getPrincipal() == "anonymousUser") {
             return;
         }
 
+        Long id = ((User) authentication.getPrincipal()).getId();
+
         boolean isAdmin = authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+
         model.addAttribute("isAdmin", isAdmin);
 
-        userRepository.findByEmail(authentication.getName()).ifPresent(user -> {
+        String email = authentication.getName();
+
+        userRepository.findById(id).ifPresent(user -> {
+
             model.addAttribute("currentUserDisplay",
                     user.getFirstname() + " " + user.getLastname());
+
             model.addAttribute("currentUserRole",
                     isAdmin ? "Vorgesetzter" : "Mitarbeiter");
-            String departmentName = user.getDepartment() != null
-                    ? user.getDepartment().getName()
-                    : "Keine Abteilung";
+
             model.addAttribute("currentUserDepartment",
-                    departmentName);
+                    user.getDepartment() != null
+                            ? user.getDepartment().getName()
+                            : "Keine Abteilung");
         });
     }
 }

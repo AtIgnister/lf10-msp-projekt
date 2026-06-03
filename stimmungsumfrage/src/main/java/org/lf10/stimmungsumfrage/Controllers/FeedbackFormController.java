@@ -27,7 +27,14 @@ public class FeedbackFormController {
 
     // Display feedback form
     @GetMapping
-    public String getForm(Model model) {
+    public String getForm(Model model, Authentication authentication) {
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
+
+        if(user.canSubmitFeedback()) {
+            return "FeedbackCooldownPage";
+        }
+
         model.addAttribute("feedbackForm", new FeedbackForm()); // bind empty form
         model.addAttribute("data", "Welcome");
         return "FeedbackForm";
@@ -43,6 +50,10 @@ public class FeedbackFormController {
         User user = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
 
+        if(user.canSubmitFeedback()) {
+            return "FeedbackCooldownPage";
+        }
+
         Mood moodEntity = moodRepository.findByMoodName(feedbackForm.getMood().toUpperCase())
                 .orElseThrow(() -> new RuntimeException("Mood not found"));
 
@@ -52,6 +63,8 @@ public class FeedbackFormController {
         submission.setDepartment(user.getDepartment());
 
         submissionRepository.save(submission);
+        user.setLastSubmission(LocalDateTime.now());
+        userRepository.save(user);
 
         model.addAttribute("feedback", feedbackForm.getFeedback());
         model.addAttribute("mood", moodEntity.getMoodName());
@@ -59,7 +72,7 @@ public class FeedbackFormController {
     }
 
     // Zeigt alle Feedbacks, deren Text nicht leer ist.
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("feedbacks")
     public String getFeedbacksWithText(
             @RequestParam(required = false) Long departmentId,
@@ -90,6 +103,11 @@ public class FeedbackFormController {
     public String getAllSortedByMood(Model model, @PathVariable String direction) {
 
         return sortFeedbackList("mood", direction, model);
+    }
+    @GetMapping("feedbacks/feedback/{direction}")
+    public String getAllSortedByFeedback(Model model, @PathVariable String direction) {
+
+        return sortFeedbackList("feedbackText", direction, model);
     }
     @GetMapping("feedbacks/created_at/{direction}")
     public String getAllSortedByErstellung(Model model, @PathVariable String direction) {

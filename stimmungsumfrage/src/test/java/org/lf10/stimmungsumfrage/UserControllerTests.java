@@ -100,8 +100,7 @@ public class UserControllerTests {
                 .setEmail("jane@example.com")
                 .setPassword("oldpass")
                 .setDepartment(validDept)
-                .setRole(validRole)
-                .setHasSubmittedFeedback(false);
+                .setRole(validRole);
 
         when(userService.registerUser(any(User.class))).thenReturn(newUser);
 

@@ -7,53 +7,52 @@
 </head>
 
 <body>
-
 <section layout:fragment="content" class="fade-in">
 
-    <div class="text-center mb-4">
-        <h2 class="page-heading">Wie geht es dir heute?</h2>
-        <p class="text-secondary-dark">Bewerte deine aktuelle Stimmung</p>
-    </div>
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 class="page-heading">Wie geht es dir heute?</h2>
+            <p class="text-secondary-dark">Bewerte deine aktuelle Stimmung</p>
+        </div>
 
-    <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-10 col-md-8 col-lg-6">
 
-            <div class="card surface-panel card-hover p-4">
-                <form th:method="put" th:action="@{/}">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="card surface-panel card-hover p-4">
+                    <form th:method="put" th:action="@{/}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-                    <div class="mb-3">
-                        <label for="mood" class="form-label">Stimmung</label>
-                        <select name="mood"
-                                id="mood"
-                                class="form-select"
-                                required>
-                            <option value="happy">😊 Happy</option>
-                            <option value="neutral">😐 Neutral</option>
-                            <option value="sad">😢 Sad</option>
-                        </select>
-                    </div>
+                        <div class="mb-3">
+                            <label for="mood" class="form-label">Stimmung</label>
+                            <select name="mood"
+                                    id="mood"
+                                    class="form-select w-100"
+                                    required>
+                                <option value="happy">😊 Happy</option>
+                                <option value="neutral">😐 Neutral</option>
+                                <option value="sad">😢 Sad</option>
+                            </select>
+                        </div>
 
-                    <div class="mb-3">
-                        <label for="feedback" class="form-label">Feedback (optional)</label>
-                        <textarea class="form-control"
-                                  name="feedback"
-                                  id="feedback"
-                                  rows="3"
-                                  placeholder="Optionaler Kommentar..."></textarea>
-                    </div>
+                        <div class="mb-3">
+                            <label for="feedback" class="form-label">Feedback (optional)</label>
+                            <textarea class="form-control w-100"
+                                      name="feedback"
+                                      id="feedback"
+                                      rows="3"
+                                      placeholder="Optionaler Kommentar..."></textarea>
+                        </div>
 
-                    <button type="submit" class="btn btn-primary w-100">
-                        Abstimmung abschicken
-                    </button>
+                        <button type="submit" class="btn btn-primary w-100">
+                            Abstimmung abschicken
+                        </button>
 
-                </form>
+                    </form>
+                </div>
+
             </div>
-
         </div>
     </div>
 
 </section>
-
 </body>
-</html>

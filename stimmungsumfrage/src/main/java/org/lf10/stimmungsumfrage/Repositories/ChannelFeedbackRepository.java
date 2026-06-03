@@ -13,6 +13,12 @@ public interface ChannelFeedbackRepository extends JpaRepository<ChannelFeedback
 
     List<ChannelFeedback> findByChannelOrderByCreatedAtDesc(Channel channel);
 
+    List<ChannelFeedback> findByChannelAndCreatedAtBetween(
+            Channel channel,
+            LocalDateTime start,
+            LocalDateTime end
+    );
+
     @Query("SELECT cf FROM ChannelFeedback cf " +
             "WHERE ((cf.comment IS NOT NULL AND TRIM(cf.comment) <> '') " +
             "OR (cf.emoji IS NOT NULL AND TRIM(cf.emoji) <> '')) " +

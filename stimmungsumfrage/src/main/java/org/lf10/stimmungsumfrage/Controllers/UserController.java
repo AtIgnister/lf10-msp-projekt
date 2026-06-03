@@ -65,6 +65,7 @@ public class UserController {
         return new ModelAndView("redirect:/admin/users");
     }
 
+
     @GetMapping("/new")
     public String newUserForm(Model model) {
         model.addAttribute("user", new User());
@@ -108,7 +109,7 @@ public class UserController {
         model.addAttribute("roles", roleRepository.findAll());
         return "users/edit";
     }
-
+    
     @PatchMapping("/{id}")
     public String updateUser(
             @PathVariable Long id,  // User being edited
@@ -126,6 +127,7 @@ public class UserController {
         userToEdit.setEmail(userInput.getEmail());
         userToEdit.setDepartment(userInput.getDepartment());
         userToEdit.setRole(userInput.getRole());
+        userToEdit.setEnabled(userInput.getEnabled());
 
         // Update logic here using userToEdit
         userService.updateUser(userToEdit);  // Pass the specific user

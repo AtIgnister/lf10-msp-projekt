@@ -30,6 +30,51 @@
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label" for="feedbackScaleSize">Anzahl Emojis</label>
+                            <select class="form-select" name="feedbackScaleSize" id="feedbackScaleSize">
+                                <option value="2">2 Emojis – Schlecht / Gut</option>
+                                <option value="3">3 Emojis – Schlecht / Neutral / Gut</option>
+                                <option value="4">4 Emojis – Sehr schlecht / Schlecht / Gut / Sehr gut</option>
+                                <option value="5" selected>5 Emojis – Sehr schlecht / Schlecht / Neutral / Gut / Sehr gut</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label d-block">Emoji-Skala für Feedback</label>
+                            <small class="text-secondary-dark d-block mb-3">
+                                Lege die Emojis fest, die in diesem Kanal verwendet werden. Je nach Auswahl werden nur 2 bis 5 Emojis angezeigt.
+                            </small>
+
+                            <div class="row g-3">
+                                <div class="col-md-6" data-emoji-group data-visible-scales="4,5">
+                                    <label class="form-label" for="emojiVeryBad">Sehr schlecht</label>
+                                    <input type="text" class="form-control" name="emojiVeryBad" id="emojiVeryBad"
+                                           value="😡" required>
+                                </div>
+                                <div class="col-md-6" data-emoji-group data-visible-scales="2,3,4,5">
+                                    <label class="form-label" for="emojiBad">Schlecht</label>
+                                    <input type="text" class="form-control" name="emojiBad" id="emojiBad"
+                                           value="😕" required>
+                                </div>
+                                <div class="col-md-6" data-emoji-group data-visible-scales="3,5">
+                                    <label class="form-label" for="emojiNeutral">Neutral</label>
+                                    <input type="text" class="form-control" name="emojiNeutral" id="emojiNeutral"
+                                           value="😐" required>
+                                </div>
+                                <div class="col-md-6" data-emoji-group data-visible-scales="2,3,4,5">
+                                    <label class="form-label" for="emojiGood">Gut</label>
+                                    <input type="text" class="form-control" name="emojiGood" id="emojiGood"
+                                           value="🙂" required>
+                                </div>
+                                <div class="col-12" data-emoji-group data-visible-scales="4,5">
+                                    <label class="form-label" for="emojiVeryGood">Sehr gut</label>
+                                    <input type="text" class="form-control" name="emojiVeryGood" id="emojiVeryGood"
+                                           value="😄" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
                             <label class="form-label">Kanaltyp</label>
                             <div class="d-flex gap-4">
                                 <div class="form-check">
@@ -54,6 +99,29 @@
             </div>
         </div>
     </div>
+
+    <script>
+        (function () {
+            const scaleSelect = document.getElementById('feedbackScaleSize');
+            const groups = Array.from(document.querySelectorAll('[data-emoji-group]'));
+
+            function updateEmojiFields() {
+                const selected = scaleSelect.value;
+
+                groups.forEach(group => {
+                    const shouldShow = group.dataset.visibleScales.split(',').includes(selected);
+                    const input = group.querySelector('input');
+
+                    group.classList.toggle('d-none', !shouldShow);
+                    input.disabled = !shouldShow;
+                    input.required = shouldShow;
+                });
+            }
+
+            scaleSelect.addEventListener('change', updateEmojiFields);
+            updateEmojiFields();
+        })();
+    </script>
 </section>
 </body>
 </html>

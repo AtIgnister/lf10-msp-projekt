@@ -34,7 +34,7 @@ public class ChannelController {
         model.addAttribute("myChannels", channelService.getUserChannels(user));
         model.addAttribute("availableChannels", channelService.getAvailableChannels(user));
         model.addAttribute("pendingInvites", channelService.getPendingInvites(user));
-        model.addAttribute("isAdmin", user.getRole().getName().equals("ROLE_ADMIN"));
+        model.addAttribute("isAdmin", user.getRole().getName().equals("ADMIN"));
         return "channels/index";
     }
 
@@ -47,10 +47,17 @@ public class ChannelController {
     public String create(@RequestParam String name,
                          @RequestParam(required = false) String description,
                          @RequestParam String channelType,
+                         @RequestParam(defaultValue = "5") int feedbackScaleSize,
+                         @RequestParam(required = false) String emojiVeryBad,
+                         @RequestParam(required = false) String emojiBad,
+                         @RequestParam(required = false) String emojiNeutral,
+                         @RequestParam(required = false) String emojiGood,
+                         @RequestParam(required = false) String emojiVeryGood,
                          Authentication auth) {
         User user = getAuthenticatedUser(auth);
         ChannelType type = channelType.equals("invite-only") ? ChannelType.INVITE_ONLY : ChannelType.OPEN;
-        channelService.createChannel(name, description, type, user);
+        channelService.createChannel(name, description, type, user, feedbackScaleSize,
+                emojiVeryBad, emojiBad, emojiNeutral, emojiGood, emojiVeryGood);
         return "redirect:/channels";
     }
 
@@ -78,6 +85,11 @@ public class ChannelController {
                     .toList();
             model.addAttribute("invitableUsers", invitableUsers);
         }
+
+        boolean canSubmitFeedback =
+                channelService.canSubmitFeedback(user, channel);
+
+        model.addAttribute("canSubmitFeedback", canSubmitFeedback);
 
         return "channels/detail";
     }
@@ -114,8 +126,13 @@ public class ChannelController {
             return "redirect:/channels";
         }
 
+        if(!channelService.canSubmitFeedback(user, channel)) {
+            return "redirect:/channels/" + id;
+        }
+
         if ((emoji != null && !emoji.isBlank()) || (comment != null && !comment.isBlank())) {
             channelService.sendFeedback(channel, user, emoji, comment);
+            channelService.updateLastSubmitted(user, channel);
         }
         return "redirect:/channels/" + id;
     }
