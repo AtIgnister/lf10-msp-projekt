@@ -6,6 +6,7 @@ import org.lf10.stimmungsumfrage.Repositories.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -15,6 +16,7 @@ public class ChannelService {
     private final ChannelRepository channelRepository;
     private final ChannelFeedbackRepository feedbackRepository;
     private final ChannelInviteRepository inviteRepository;
+    private final UserChannelFeedbackStatusRepository statusRepository;
 
     @Transactional
     public Channel createChannel(String name, String description, ChannelType type, User creator,
@@ -146,5 +148,32 @@ public class ChannelService {
             return result.substring(0, 32);
         }
         return result;
+    }
+
+    public boolean canSubmitFeedback(User user, Channel channel) {
+        return statusRepository
+                .findByUserAndChannel(user, channel)
+                .map(status ->
+                        status.getLastSubmission() == null
+                                || status.getLastSubmission()
+                                .isBefore(LocalDateTime.now().minusDays(1)))
+                .orElse(true);
+    }
+
+    public void updateLastSubmitted(User user, Channel channel) {
+        UserChannelFeedbackStatus status =
+                statusRepository
+                        .findByUserAndChannel(user, channel)
+                        .orElseGet(() -> {
+                            UserChannelFeedbackStatus s =
+                                    new UserChannelFeedbackStatus();
+                            s.setUser(user);
+                            s.setChannel(channel);
+                            return s;
+                        });
+
+        status.setLastSubmission(LocalDateTime.now());
+
+        statusRepository.save(status);
     }
 }

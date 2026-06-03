@@ -59,6 +59,7 @@ public class UserController {
         return new ModelAndView("redirect:/admin/users");
     }
 
+
     @GetMapping("/new")
     public String newUserForm(Model model) {
         model.addAttribute("user", new User());

@@ -1,29 +1,32 @@
 package org.lf10.stimmungsumfrage.Models;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Accessors(chain = true)
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
+    @EqualsAndHashCode.Include
     private Long id;
 
     @Column(nullable = false)
@@ -41,6 +44,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Boolean hasSubmittedFeedback = false;
 
+    @Column(nullable = false)
+    private LocalDateTime lastSubmission = LocalDateTime.of(1970, 1, 1, 0, 0);
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id", nullable = false)
     private Department department;
@@ -48,6 +54,9 @@ public class User implements UserDetails {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name="role_id", nullable = false)
     private Role role;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserChannelFeedbackStatus> channelFeedbackStatuses = new HashSet<>();
 
     @Override
     @NonNull
@@ -80,5 +89,9 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true; // implement your logic if needed
+    }
+
+    public boolean canSubmitFeedback() {
+        return this.getLastSubmission().isAfter(LocalDateTime.now().minusDays(1));
     }
 }
