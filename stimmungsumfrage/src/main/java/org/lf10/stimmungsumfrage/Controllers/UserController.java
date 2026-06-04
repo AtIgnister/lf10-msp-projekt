@@ -2,6 +2,9 @@ package org.lf10.stimmungsumfrage.Controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.Forms.FeedbackForm;
+
+import java.io.Console;
+
 import org.lf10.stimmungsumfrage.Models.User;
 import org.lf10.stimmungsumfrage.Repositories.DepartmentRepository;
 import org.lf10.stimmungsumfrage.Repositories.RoleRepository;
@@ -12,6 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -76,10 +82,23 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")  // Use POST for final delete (safer)
-    public String deleteUser(@PathVariable Long id) {
-        User user = userRepository.findById(id).get();
-        userRepository.delete(user);
-        return "redirect:/admin/users";
+    public ModelAndView deleteUser(@PathVariable Long id) {
+       User user = userRepository.findById(id).orElseThrow();
+       ModelAndView mav = new ModelAndView();
+
+    String currentUsersEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+    if (currentUsersEmail.equals(user.getEmail())) {
+        mav.setStatus(HttpStatusCode.valueOf(403));
+        mav.addObject("message", "Benutzer können sich nicht selber löschen.");
+        mav.setViewName( "error");
+    }
+    else
+    {
+    userRepository.delete(user);
+    mav.setViewName("redirect:/admin/users?deleted=true");
+    }
+      return mav;
     }
 
     @GetMapping("/{id}/edit")

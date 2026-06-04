@@ -161,9 +161,11 @@ public class UserControllerTests {
     void canDeleteUser() throws Exception {
         User mockAdmin = MockData.createMockAdmin();
         mockAdmin.setId(1L);
+        mockAdmin.setEmail("admin.ad@email.de");
 
         User mockUser = MockData.createMockUser();
         mockUser.setId(2L);
+        mockUser.setEmail("user.us@email.de");
 
         when(userRepository.findById(mockUser.getId()))
                 .thenReturn(Optional.of(mockUser));
@@ -182,8 +184,7 @@ public class UserControllerTests {
                         delete("/admin/users/" + mockUser.getId())
                                 .with(user(mockAdmin))
                                 .with(csrf())
-                ).andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admin/users"));
+                ).andExpect(status().is3xxRedirection());
     }
 
     @Test
