@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Controller
@@ -117,7 +119,7 @@ public class ChannelController {
     public String sendFeedback(@PathVariable Long id,
                                @RequestParam(required = false) String emoji,
                                @RequestParam(required = false) String comment,
-                               Authentication auth) {
+                               Authentication auth) throws NoSuchAlgorithmException, InvalidKeyException {
         User user = getAuthenticatedUser(auth);
         Channel channel = channelRepository.findById(id)
                 .orElseThrow(() -> new IllegalStateException("Channel not found"));
