@@ -1,5 +1,6 @@
 package org.lf10.stimmungsumfrage;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.lf10.stimmungsumfrage.Models.*;
@@ -10,6 +11,7 @@ import org.lf10.stimmungsumfrage.Services.ChannelService;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -33,6 +35,11 @@ class ChannelServiceTest {
 
     @InjectMocks
     private ChannelService channelService;
+
+    @BeforeEach
+    void setUp() {
+        ReflectionTestUtils.setField(channelService, "pseudonymSecret", "test-secret");
+    }
 
     @Test
     void createChannel_SetsFieldsAndAddsCreatorAsMember() {
@@ -149,7 +156,7 @@ class ChannelServiceTest {
         ChannelFeedback saved = channelService.sendFeedback(channel, user, "🙂", "Looks good");
 
         assertSame(channel, saved.getChannel());
-        assertSame(user, saved.getUser());
+        assertNotNull(saved.getSubmitterToken());
         assertEquals("🙂", saved.getEmoji());
         assertEquals("Looks good", saved.getComment());
         verify(feedbackRepository, times(1)).save(any(ChannelFeedback.class));
