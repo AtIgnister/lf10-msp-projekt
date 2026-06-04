@@ -22,11 +22,13 @@ public class ChannelFeedback {
     @EqualsAndHashCode.Exclude
     private Channel channel;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    @ToString.Exclude
+//    @EqualsAndHashCode.Exclude
+//    private User user;
+
+    private String submitterToken;
 
     private String emoji;
 

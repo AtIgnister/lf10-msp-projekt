@@ -3,9 +3,15 @@ package org.lf10.stimmungsumfrage.Services;
 import lombok.RequiredArgsConstructor;
 import org.lf10.stimmungsumfrage.Models.*;
 import org.lf10.stimmungsumfrage.Repositories.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
 import java.util.List;
 
 @Service
@@ -15,6 +21,9 @@ public class ChannelService {
     private final ChannelRepository channelRepository;
     private final ChannelFeedbackRepository feedbackRepository;
     private final ChannelInviteRepository inviteRepository;
+
+    @Value("${app.pseudonym.secret}")
+    private String pseudonymSecret;
 
     @Transactional
     public Channel createChannel(String name, String description, ChannelType type, User creator,
@@ -62,10 +71,11 @@ public class ChannelService {
     }
 
     @Transactional
-    public ChannelFeedback sendFeedback(Channel channel, User user, String emoji, String comment) {
+    public ChannelFeedback sendFeedback(Channel channel, User user, String emoji, String comment) throws NoSuchAlgorithmException, InvalidKeyException {
+        String token = computeToken(user.getId(), channel.getId());
         ChannelFeedback feedback = new ChannelFeedback();
         feedback.setChannel(channel);
-        feedback.setUser(user);
+        feedback.setSubmitterToken(token);
         feedback.setEmoji(emoji);
         feedback.setComment(comment);
         return feedbackRepository.save(feedback);
@@ -109,6 +119,13 @@ public class ChannelService {
     public void declineInvite(ChannelInvite invite) {
         invite.setStatus(InviteStatus.DECLINED);
         inviteRepository.save(invite);
+    }
+
+    private String computeToken(Long userId, Long channelId) throws NoSuchAlgorithmException, InvalidKeyException {
+        String input = userId + ":" + channelId;
+        Mac mac = Mac.getInstance("HmacSHA256");
+        mac.init(new SecretKeySpec(pseudonymSecret.getBytes(), "HmacSHA256"));
+        return HexFormat.of().formatHex(mac.doFinal(input.getBytes()));
     }
 
     private void applyFeedbackEmojis(Channel channel, int feedbackScaleSize,

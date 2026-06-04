@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -138,7 +140,7 @@ class ChannelServiceTest {
     }
 
     @Test
-    void sendFeedback_PersistsEmojiAndComment() {
+    void sendFeedback_PersistsEmojiAndComment() throws NoSuchAlgorithmException, InvalidKeyException {
         Channel channel = new Channel();
         User user = new User();
 
