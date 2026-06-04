@@ -1,12 +1,17 @@
 package org.lf10.stimmungsumfrage;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.lf10.stimmungsumfrage.Config.DataInitializer;
 import org.lf10.stimmungsumfrage.Models.Department;
 import org.lf10.stimmungsumfrage.Models.Location;
 import org.lf10.stimmungsumfrage.Models.Role;
 import org.lf10.stimmungsumfrage.Models.User;
 import org.lf10.stimmungsumfrage.Repositories.UserRepository;
 import org.lf10.stimmungsumfrage.Services.UserService;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,16 +21,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+
+@ExtendWith(MockitoExtension.class)
 class UserTests {
 
-    @Autowired
+    @InjectMocks
     private UserService userService;
 
-    @MockitoBean
+    @Mock
     private UserRepository userRepository;
 
-    @MockitoBean
+    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Test

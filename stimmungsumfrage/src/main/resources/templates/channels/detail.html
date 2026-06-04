@@ -78,10 +78,16 @@
     </div>
 
     <!-- Feedback Section -->
+    <div class="card surface-panel" th:unless="${canSubmitFeedback}">
+        <div class="card-body">
+            <p>Du hast heute schon abgestimmt. Bitte warte 24 Stunden.</p>
+        </div>
+    </div>
+
     <div class="card surface-panel">
         <div class="card-body">
             <h5 class="mb-3">📝 Kanal-Feedback</h5>
-            <form th:action="@{/channels/{id}/feedback(id=${channel.id})}" method="post" class="mb-4">
+            <form th:unless="${!canSubmitFeedback}" th:action="@{/channels/{id}/feedback(id=${channel.id})}" method="post" class="mb-4">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="mb-3" th:with="emojiLabels=${channel.feedbackEmojiLabels}">
                     <small class="text-secondary-dark me-2 d-block mb-2">Stimmung:</small>
